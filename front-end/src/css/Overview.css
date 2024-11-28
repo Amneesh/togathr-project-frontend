@@ -1,0 +1,117 @@
+.overview-root {
+    display: flex;
+    gap: 10px;
+    margin: 1rem 0;
+}
+.overview-budget-root {
+    padding: 1.5rem;
+    border-radius: 15px;
+}
+.overview-budget-head {
+    display: flex;
+    justify-content: space-between;
+}
+
+.overview-view-more-btn {
+    border-radius: 1.5rem;
+    border: solid 1px blueviolet;
+    color: blueviolet;
+    padding: 0 1rem;
+}
+
+.overview-view-more-btn:hover {
+    background-color: blueviolet;
+    color: white;
+}
+
+.budget-numbers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.abcdef{
+  max-width: 300px;
+}
+.event-type {
+    border: 1px solid white;
+    border-radius: 1.5rem;
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+
+.modal-box-root {
+    display: flex;
+    align-items: center;
+}
+
+.event-main-section {
+    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    padding: 2rem;
+    border-radius: 1.2rem;
+    gap: 2rem;
+    flex-grow: 1;
+    background-color: var(--primary-purple);
+    color: var(--primary-white);
+    
+    background-image: url(../resources/assets/Images/email_bg.png);
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  
+    select {
+      background-color: transparent;
+      color: var(--primary-white);
+      border: 1px solid;
+      padding: 5px 10px;
+      border-radius: 50px;
+    }
+  }
+  
+  .event-main-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .event-main-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .event-content {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 4rem;
+    justify-content: center;
+    align-items: center;
+    padding-right: 1rem;
+  }
+  
+  .event-address-text {
+    max-width: 250px;
+    max-lines: 4;
+  }
+
+  @media only screen and (max-width:800px){
+    .event-main-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 2rem 1rem;
+
+        font-size: 0.8rem;
+    }
+
+    .event-main-body {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem
+        ;
+    }
+
+    .event-content {
+        display: flex;
+        gap: 1rem;
+    }
+  }

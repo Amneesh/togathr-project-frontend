@@ -1,0 +1,18 @@
+input[type="text"]{
+    border-radius: 2rem;
+    padding: .3rem;
+    
+}
+
+.total{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.vendor-map {
+    div {
+        border-radius: 20px;
+
+    }
+    
+}

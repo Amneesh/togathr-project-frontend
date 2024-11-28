@@ -1,0 +1,554 @@
+[
+    {
+        "category": "liquor_store",
+        "item_type": "Food & Drinks",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 10.99,
+                        "description": " 2-hour service,Selection of wines and beers,Bartender servicee"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 19.99,
+                        "description": "4-hour service,Premium selection of wines, beers, and cocktails,2 bartenders,Drinkware included"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 29.99,
+                        "description": "Full-day service,Customized cocktail menu,Top-shelf liquor selection,Multiple bartenders,Setup and cleanup"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 40.99,
+                        "description": " 2-hour service,Selection of wines and beers,Bartender servicee"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 50.99,
+                        "description": "4-hour service,Premium selection of wines, beers, and cocktails,2 bartenders,Drinkware included"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 60.99,
+                        "description": "Full-day service,Customized cocktail menu,Top-shelf liquor selection,Multiple bartenders,Setup and cleanup"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "florist",
+        "item_type": "Decorations",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 10.99,
+                        "description": " 1 centerpiece arrangement,Bouquet for bride,Online gallery for selection"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 19.99,
+                        "description": "3 centerpiece arrangements,Bouquet and boutonniere,Floral arch,Online gallery for selection"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 29.99,
+                        "description": "Full floral decor for venue,Bridal party bouquets and boutonnieres,Floral arch,Flower delivery and setup"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 40.99,
+                        "description": " 1 centerpiece arrangement,Bouquet for bride,Online gallery for selection"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 50.99,
+                        "description": "3 centerpiece arrangements,Bouquet and boutonniere,Floral arch,Online gallery for selection"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 60.99,
+                        "description": "Full floral decor for venue,Bridal party bouquets and boutonnieres,Floral arch,Flower delivery and setup"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "photographer",
+        "item_type": "Photograph",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 100,
+                        "description": " 2-hour session,20 edited digital photos,Online gallery"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 200,
+                        "description": "4-hour session,50 edited digital photos,Online gallery,1 print (8x10)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 300,
+                        "description": "6-hour session,100 edited digital photos,Online gallery,2 prints (8x10),USB drive with all images"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 200,
+                        "description": " 2-hour session,20 edited digital photos,Online gallery"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 300,
+                        "description": "4-hour session,50 edited digital photos,Online gallery,1 print (8x10)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 400,
+                        "description": "6-hour session,100 edited digital photos,Online gallery,2 prints (8x10),USB drive with all images"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "lodging",
+        "item_type": "Venue",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1000.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1500.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2000.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1200.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1800.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2300.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "hair_care" ,
+        "item_type": "Miscellaneous",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 300.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 400.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 390.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 500.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 600.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "shopping_mall",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1000.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1500.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2000.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1200.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1800.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2300.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "hair_care",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 300.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 400.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 390.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 500.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 600.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "point_of_interest" ,
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 300.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 400.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 390.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 500.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 600.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "beauty_salon",
+        "item_type": "Miscellaneous",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 300.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 400.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 390.99,
+                        "description": "1-hour session,Makeup for one person,Natural look (light coverage),False lashes included,Touch-up kit for reapplication"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 500.99,
+                        "description": "2-hour session,Makeup for up to 3 people,Choice of glam or natural look,False lashes and basic contouring,Touch-up kit and setting spray,Mini skincare prep (moisturizer, primer)"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 600.99,
+                        "description": "  4-hour session,Makeup for up to 5 people,Full glam with contouring and highlight,Premium false lashes,On-site touch-ups during event,Mini facial before makeup application,Travel to event location (within 20 miles)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "car_rental",
+        "item_type": "Miscellaneous",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 100.99,
+                        "description": "Standard sedan (e.g., Toyota Corolla, Honda Civic), Unlimited mileage, Basic insurance coverage, 24/7 roadside assistance, GPS navigation system"
+                    },
+                    {
+                        "type": "Standard",
+                        "price": 250.99,
+                        "description": "Premium sedan or SUV (e.g., BMW 5 Series, Audi Q5), Unlimited mileage, Full insurance coverage (collision & theft), 24/7 roadside assistance, GPS navigation & car seat upon request, Airport pickup/drop-off"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "Luxury vehicle (e.g., Mercedes S-Class, Range Rover), Unlimited mileage, Comprehensive insurance with zero deductible, 24/7 VIP roadside assistance, Complimentary GPS, car seats, and Wi-Fi hotspot, Personalized airport pickup/drop-off with chauffeur"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 150.99,
+                        "description": "Standard sedan (e.g., Toyota Corolla, Honda Civic), Unlimited mileage, Basic insurance coverage, 24/7 roadside assistance, GPS navigation system"
+                    },
+                    {
+                        "type": "Standard",
+                        "price": 300.99,
+                        "description": "Premium sedan or SUV (e.g., BMW 5 Series, Audi Q5), Unlimited mileage, Full insurance coverage (collision & theft), 24/7 roadside assistance, GPS navigation & car seat upon request, Airport pickup/drop-off"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 700.99,
+                        "description": "Luxury vehicle (e.g., Mercedes S-Class, Range Rover), Unlimited mileage, Comprehensive insurance with zero deductible, 24/7 VIP roadside assistance, Complimentary GPS, car seats, and Wi-Fi hotspot, Personalized airport pickup/drop-off with chauffeur"
+                    }
+                ]
+            }
+            
+        ]
+    },
+
+    {
+        "category": "travel_agency",
+        "item_type": "Miscellaneous",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 100.99,
+                        "description": "Standard sedan (e.g., Toyota Corolla, Honda Civic), Unlimited mileage, Basic insurance coverage, 24/7 roadside assistance, GPS navigation system"
+                    },
+                    {
+                        "type": "Standard",
+                        "price": 250.99,
+                        "description": "Premium sedan or SUV (e.g., BMW 5 Series, Audi Q5), Unlimited mileage, Full insurance coverage (collision & theft), 24/7 roadside assistance, GPS navigation & car seat upon request, Airport pickup/drop-off"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 500.99,
+                        "description": "Luxury vehicle (e.g., Mercedes S-Class, Range Rover), Unlimited mileage, Comprehensive insurance with zero deductible, 24/7 VIP roadside assistance, Complimentary GPS, car seats, and Wi-Fi hotspot, Personalized airport pickup/drop-off with chauffeur"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 150.99,
+                        "description": "Standard sedan (e.g., Toyota Corolla, Honda Civic), Unlimited mileage, Basic insurance coverage, 24/7 roadside assistance, GPS navigation system"
+                    },
+                    {
+                        "type": "Standard",
+                        "price": 300.99,
+                        "description": "Premium sedan or SUV (e.g., BMW 5 Series, Audi Q5), Unlimited mileage, Full insurance coverage (collision & theft), 24/7 roadside assistance, GPS navigation & car seat upon request, Airport pickup/drop-off"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 700.99,
+                        "description": "Luxury vehicle (e.g., Mercedes S-Class, Range Rover), Unlimited mileage, Comprehensive insurance with zero deductible, 24/7 VIP roadside assistance, Complimentary GPS, car seats, and Wi-Fi hotspot, Personalized airport pickup/drop-off with chauffeur"
+                    }
+                ]
+            }
+            
+        ]
+    },
+    {
+        "category": "hardware_store",
+        "item_type": "Miscellaneous",
+        "rating": [
+            {
+                "val": 3,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1000.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1500.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2000.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            },
+            {
+                "val": 4,
+                "packages": [
+                    {
+                        "type": "Basic",
+                        "price": 1200.99,
+                        "description": "  4-hour venue rental,Seating for up to 50 guests,Standard tables and chairs,Basic audio system,On-site staff for assistance"
+                    },
+                    {
+                        "type": "standard",
+                        "price": 1800.99,
+                        "description": "6-hour venue rental,Seating for up to 100 guests,Decorated tables and chairs,Upgraded audio and lighting system,Use of kitchen facilities,Dedicated event coordinator"
+                    },
+                    {
+                        "type": "Premium",
+                        "price": 2300.99,
+                        "description": " 8-hour venue rental,Seating for up to 150 guests,Customizable decor options,Premium audio, lighting, and projection systems,Full access to kitchen and bar areas,Complimentary valet parking,Event setup and cleanup services"
+                    }
+                ]
+            }
+        ]
+    }
+]
