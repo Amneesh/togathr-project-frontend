@@ -102,11 +102,14 @@ const VendorsList = ({ getVendorType, currentLocation }) => {
     console.log('vendortype', location, vendorType, radius);
 
     try {
-      const queryParams = new URLSearchParams({
-        business_type: vendorType
-      }).toString();
+   
 
-      const result = await readDataFromMongoWithParam('vendor_data', queryParams);
+      const queryParams = {
+        and: [
+            { business_type: vendorType}
+        ]
+    };
+      const result = await readDataFromMongoWithParam('vendor_data', JSON.stringify(queryParams));
 
       if (result && result.length > 0) {
           console.log(result + '6666666666');

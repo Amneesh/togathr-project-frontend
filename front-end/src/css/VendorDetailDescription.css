@@ -412,6 +412,7 @@ hr{
     justify-content: space-between;
     align-items: center;
 
+
 }
 .vendor-category-overview{
     width: 100%;
@@ -422,6 +423,9 @@ hr{
     border-radius: 20px;
     width: 100%;
    
+}
+.heading-cat h3{
+    font-size: clamp(20px, 4vw, 25px);
 }
 
 .m-cat{
@@ -543,4 +547,8 @@ button#simple-tab-0 ,button#simple-tab-1, button#simple-tab-2 {
         font-size: 1rem;
     }
 
+}
+
+.flex-icon {
+    display: flex;
 }

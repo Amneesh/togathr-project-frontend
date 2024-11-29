@@ -8,7 +8,6 @@ import "aos/dist/aos.css";
 const TotalGuestPieChart = ({ timeLineData, donutData , barData }) => {
   useEffect(() => {
     AOS.init({
-      disable: "phone",
       duration: 700,
       easing: "ease-out-cubic",
     });
@@ -55,14 +54,6 @@ console.log('Bardata', barData);
   };
 
 
-  // const series_total_guest_list = [8, 0, 0, 0, 0]; // Data for the pie chart
-
-
-  //   const series_invited_guest = [
-  //     {
-  //     data: [lineGraphData]
-  //   }
-  // ];
 
   useEffect(() => {
 

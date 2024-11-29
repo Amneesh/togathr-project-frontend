@@ -2,11 +2,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
-import { googleVendorAuth, vendorLogin } from "../../api/loginApi.js";
+import {googleLoginLive , loginUser} from "../../api/loginApi.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "/src/resources/assets/Logo/vendor_logo.svg";
 import { useSnackbar } from "../components/SnackbarContext.jsx";
+import { createDataInMongo, readDataFromMongoWithParam } from "../../api/mongoRoutingFile.js";
 
 const VendorsLogin = () => {
   const showSnackbar = useSnackbar();
@@ -17,46 +18,71 @@ const VendorsLogin = () => {
   useEffect(() => { }, [authenticateNavigate, navigate]);
 
   const responseGoogle = async (authResult) => {
-    try {
+   
       if (authResult["code"]) {
-        const response = await googleVendorAuth(authResult["code"]);
-        if (response.status == 200 || response.status == 201) {
-          console.log(response.data.vendor, "response from login");
-          saveVendorInfoInLocalStorage(
-            response.data.vendor,
-            response.data.token
-          );
-          navigate("/vendor-portal");
-        } else {
-          toast.error(response.message);
+
+        console.log(authResult["code"]);
+        const googleData = {
+          "code": authResult["code"],
+          "collectionName": "vendors"
         }
+
+        googleLoginLive(googleData).then(response => {
+          console.log('Response from createdData:', response);
+          showSnackbar('Confirmation', response.message);
+          const email = response.user.email;
+          const token = response.token;
+          console.log(token, 'token');
+  
+          navigate("/vendor-portal");
+          // getUpdatedData(email, token, response.user);
+  
+          saveVendorInfoInLocalStorage(
+                response.user,
+                response.token
+              );
+  
+        })
+          .catch(error => {
+            console.error('Failed to update data:', error);
+            showSnackbar('Oops!', `Try again`, '#FBECE7');
+  
+          });
+          
+       
       }
-    } catch (error) {
-      console.log("Error while requesting google", error);
-    }
+   
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await vendorLogin({
-        userEmail: userEmail,
-        password: e.target.password.value,
-      });
-      if (response.status == 200 || response.status == 201) {
-        console.log(
-          response.data.vendor,
-          response.data.token,
-          "response from login"
-        );
-        saveVendorInfoInLocalStorage(response.data.vendor, response.data.token);
-        navigate("/vendor-portal");
-      } else {
-        toast.error(response.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
+
+    const loginData = {
+      "userEmail": userEmail,
+      "password": e.target.password.value,
+      "collectionName": 'vendors'
     }
+    loginUser(loginData).then(response => {
+      console.log('Response from createdData:', response);
+      showSnackbar('Confirmation', response.message);
+      const token = response.token;
+      console.log(token, 'token');
+      navigate("/vendor-portal");
+      saveVendorInfoInLocalStorage(
+            response.user,
+            response.token
+          );
+      // getUpdatedData(email, token, response.user);
+
+    })
+      .catch(error => {
+        console.error('Failed to update data:', error);
+        showSnackbar('Oops!', `Try again`, '#FBECE7');
+
+      });
+
+
+    
   };
 
   const saveVendorInfoInLocalStorage = (vendor, token) => {

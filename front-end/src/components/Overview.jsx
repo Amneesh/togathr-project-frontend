@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { getOverviewData, updateDataInMongo } from "../../api/mongoRoutingFile";
+import { readSingleDataFromMongo, updateDataInMongo } from "../../api/mongoRoutingFile";
 import { TaskList } from './TaskList';
 import GuestListOverview from './GuestListOverview'
 import VendorMainOverview from './VendorMainOverview';
 import DonutChart from './DonutChart';
+import ProgressChartBar from './ProgressChartBar';
 import '../css/Overview.css'
 import OverviewCollaborators from './OverviewCollaborators';
 import Modal from './ModalPopupBox';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import VendorCategoryOverview from './VendorCategoryOverview';
-
+import TogathrLoader from './TogathrLoader';
+import Donut from './DonutChart';
 const Overview = ({ setActiveItem, eventId }) => {
     const [event, setEvent] = useState(null);
     const [budgetList, setBudgetList] = useState([]);
@@ -37,13 +39,13 @@ const Overview = ({ setActiveItem, eventId }) => {
         let chartDetails = new Map();
         budgetItems?.map(item => {
             if (chartDetails.has(item.budgetCategory)) {
-                if(parseFloat(item.totalCost) && parseFloat(item.totalCost) > 0) {
+                if (parseFloat(item.totalCost) && parseFloat(item.totalCost) > 0) {
                     chartDetails.set(item.budgetCategory, parseFloat(chartDetails.get(item.budgetCategory)) + parseFloat(item.totalCost));
                 } else {
                     chartDetails.set(item.budgetCategory, parseFloat(chartDetails.get(item.budgetCategory)) + parseFloat(item.estimateAmount));
                 }
             } else {
-                if(parseFloat(item.totalCost) && parseFloat(item.totalCost) > 0) {
+                if (parseFloat(item.totalCost) && parseFloat(item.totalCost) > 0) {
                     chartDetails.set(item.budgetCategory, parseFloat(item.totalCost));
                 } else {
                     chartDetails.set(item.budgetCategory, parseFloat(item.estimateAmount));
@@ -75,10 +77,10 @@ const Overview = ({ setActiveItem, eventId }) => {
                 const selectedEventID = eventId;
                 if (selectedEventID) {
                     try {
-                        getOverviewData(selectedEventID).then(response => {
+                        readSingleDataFromMongo('events', selectedEventID).then(response => {
                             // let allBudgetItems = response['budget_items'];
-                            let eventObject = response['event_data'];
-                            
+                            let eventObject = response;
+
                             // Selected event data for header and edit event
                             setEvent(eventObject);
                             setBudgetList(eventObject.budgetItems);
@@ -92,7 +94,7 @@ const Overview = ({ setActiveItem, eventId }) => {
                             let totalBudgetCost = 0;
                             let totalDueAmount = 0;
                             eventObject.budgetItems && eventObject.budgetItems.length > 0 ? eventObject.budgetItems.map(item => {
-                                
+
                                 // Calculate total amount
                                 if (parseFloat(item.totalCost)) {
                                     console.log('INSIDE FIRST IF')
@@ -138,7 +140,7 @@ const Overview = ({ setActiveItem, eventId }) => {
             guestCount: guestCount,
             maxBudget: maxBudget,
         }
-        
+
         updateDataInMongo('events', eventId, updatedEvent).then((response) => {
             // generateAndSaveTaskList(eventType, createdBy, response._id);
             setEvent(updatedEvent);
@@ -174,7 +176,7 @@ const Overview = ({ setActiveItem, eventId }) => {
 
     return (
         <>
-            {eventId!=null ?
+            {eventId != null ?
                 <div className='overview-main-section'>
 
                     <section className='event-main-section'>
@@ -183,11 +185,11 @@ const Overview = ({ setActiveItem, eventId }) => {
                             <h5>Your Event: </h5>
                             {/* <h5><i className="fa-regular fa-pen-to-square"></i> Edit</h5> */}
                             <div className='modal-box-root'>
-                                <h5><i className="fa-regular fa-pen-to-square"></i></h5>
+                                <h5><i className="fa-regular fa-pen-to-square"></i> </h5>
                                 <Modal
                                     buttonClassName="button-white-fill"
                                     buttonId="updateEvent "
-                                    buttonLabel="Edit"
+                                    buttonLabel='Edit'
                                     modalHeaderTitle="Update Event Detail"
                                     modalBodyHeader="Update details"
                                     // modalBodyHeader="Insert your body header here"
@@ -271,13 +273,13 @@ const Overview = ({ setActiveItem, eventId }) => {
 
                         <div className='event-main-body'>
                             <div className='event-type'>
-                                {event ? `Event Type: ${event.eventType}` : ''}
+                                {event ? ` ${event.eventType}` : ''}
                             </div>
 
                             <div className="event-content">
-                                <p> <i className='fa fa-user' style={{color: 'var(--accent-pink)'}}></i> {event ? event.guestCount : ''}</p>
-                                <p className='event-address-text'>   <i className="fa-solid fa-location-dot" style={{color: 'var(--accent-blue)'}}></i> {event ? event.location : ''}</p>
-                                <p>  <i className="fa-solid fa-calendar" style={{color: 'var(--accent-yellow)'}}></i> {event ? event.eventDate : ''}</p>
+                                <p> <i className='fa fa-user' style={{ color: 'var(--accent-pink)' }}></i> {event ? event.guestCount : ''}</p>
+                                <p className='event-address-text'>   <i className="fa-solid fa-location-dot" style={{ color: 'var(--accent-blue)' }}></i> {event ? event.location : ''}</p>
+                                <p>  <i className="fa-solid fa-calendar" style={{ color: 'var(--accent-yellow)' }}></i> {event ? event.eventDate : ''}</p>
                             </div>
 
                         </div>
@@ -287,7 +289,7 @@ const Overview = ({ setActiveItem, eventId }) => {
                     <section className='overview-feature-container'>
 
                         <div className="overview-left-container">
-                            <TaskList TaskeventId={eventId} TaskeventType={eventType}/>
+                            <TaskList TaskeventId={eventId} TaskeventType={eventType} />
                         </div>
 
                         <div className="overview-right-container">
@@ -314,19 +316,23 @@ const Overview = ({ setActiveItem, eventId }) => {
                                                     <h2>${totalDue}</h2>
                                                 </div>
                                             </div>
-                                            {
-                                             chartData && chartData.length > 0 && (
-                                                <div className='abcdef'>
-                                                    <DonutChart labels={chartLabels} data={chartData} position={'right'}  />
-                                                </div>
-                                            )}
                                         </div>
+
+                                        {chartData && chartData.length > 0 ? (
+                                            <div className='abcdef'>
+                                                <Donut
+                                                Chart labels={chartLabels} data={chartData} position={'right'} style={{ width: '50px', height: '50px' }} />
+                                            </div>
+                                        ) : <div className='max-budget-indicator'>
+                                            <DonutChart labels={['Your Budget']} data={event ? [event.maxBudget] : [0]} position={'right'} style={{ width: '50px', height: '50px' }} />
+                                        </div>}
 
                                     </div>
 
                                 </div>
 
                                 <div className="overview-guest-widget">
+                                    {/* <TogathrLoader/> */}
                                     <GuestListOverview active={setActiveItem}
                                     
                                     donutdata = {  event ? event.guestCount : ''}/>

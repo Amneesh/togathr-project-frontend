@@ -53,13 +53,16 @@ const VendorGoogleDetailedPage = ({ vendorData }) => {
 
     const handleCheckBookedEvent = async () => {
         try {
-            const queryParams = new URLSearchParams({
-                business_id: vendorID,
-                eventID: eventID,
-                email: userEmail,
-            }).toString();
+        
+            const queryParams = {
+                and: [
+                    { business_id: vendorID},
+                    { eventID: eventID},
+                    { email: userEmail}
+                ]
+            };
 
-            const result = await readDataFromMongoWithParam('booked_vendors', queryParams);
+            const result = await readDataFromMongoWithParam('booked_vendors', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
                 console.log(result);
@@ -80,13 +83,17 @@ const VendorGoogleDetailedPage = ({ vendorData }) => {
 
     const handleCheckFavEvent = async () => {
         try {
-            const queryParams = new URLSearchParams({
-                business_id: vendorID,
-                eventID: eventID,
-                email: userEmail,
-            }).toString();
+          
 
-            const result = await readDataFromMongoWithParam('favorites', queryParams);
+            const queryParams = {
+                and: [
+                    { business_id: vendorID},
+                    { eventID: eventID},
+                    { email: userEmail}
+                ]
+            };
+
+            const result = await readDataFromMongoWithParam('favorites', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
                 console.log(result);
@@ -211,11 +218,14 @@ const VendorGoogleDetailedPage = ({ vendorData }) => {
 
     const readReviews = async () => {
 
-        const queryParams = new URLSearchParams({
-            place_id: vendorID,
-        }).toString();
+    
 
-        const result = await readDataFromMongoWithParam('reviews', queryParams);
+        const queryParams = {
+            and: [
+                {   place_id: vendorID,},
+            ]
+        };
+        const result = await readDataFromMongoWithParam('reviews', JSON.stringify(queryParams));
 
         if (result && result.length > 0) {
             console.log(result, '---------------------------');

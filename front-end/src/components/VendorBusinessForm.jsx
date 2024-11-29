@@ -53,7 +53,7 @@ const VendorBusinessForm = () => {
 
     useEffect(() => {
 
-       
+
         chooseExisting();
     }, [vendorProfile])
 
@@ -122,16 +122,16 @@ const VendorBusinessForm = () => {
     };
 
     const handleLinkClick = (id) => {
-        if(vendorList){
-        const selectedData = vendorList.find((item) => item._id === id);
-        console.log(selectedData);
-        setFormData(selectedData);
-        setBusinessID(id);
-        setFormVisible(true);
+        if (vendorList) {
+            const selectedData = vendorList.find((item) => item._id === id);
+            console.log(selectedData);
+            setFormData(selectedData);
+            setBusinessID(id);
+            setFormVisible(true);
 
 
 
-        console.log(id);
+            console.log(id);
         }
     };
     useEffect(() => {
@@ -160,11 +160,15 @@ const VendorBusinessForm = () => {
     const chooseExisting = async () => {
 
         try {
-            const queryParams = new URLSearchParams({
-                user_email: vendorProfile.email,
-            }).toString();
 
-            const result = await readDataFromMongoWithParam('vendor_data', queryParams);
+            const queryParams = {
+                and: [
+                    { user_email: vendorProfile.email }
+                ]
+            };
+
+
+            const result = await readDataFromMongoWithParam('vendor_data', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
                 setVendorList(result);
@@ -173,7 +177,7 @@ const VendorBusinessForm = () => {
             }
         } catch (error) {
             console.error('Error checking event:', error);
-           
+
         }
 
     }
@@ -314,7 +318,7 @@ const VendorBusinessForm = () => {
 
 
                                         <div className="vendor-business-card-header" onClick={() => handleLinkClick(item._id)}>
-                                            <UnsplashImages query={item.business_type} numberOfImages={'1'}   randomPage={'1'}/>
+                                            <UnsplashImages query={item.business_type} numberOfImages={'1'} randomPage={'1'} />
                                         </div>
 
                                         <div className="vendor-business-card-body">

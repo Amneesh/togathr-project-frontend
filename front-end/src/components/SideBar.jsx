@@ -11,7 +11,6 @@ const SideBar = ({ activeItem, setActiveItem }) => {
   const navigate = useNavigate();
   useEffect(() => {
     AOS.init({
-        disable: "phone",
         duration: 700,
         easing: "ease-out-cubic",
     });

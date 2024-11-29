@@ -15,6 +15,8 @@ const SendWorkSpaceInvite = () => {
   const subject = "Join the Event Workspace";
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // const [eventId, seteventId] = useState(localStorage.getItem("eventId"));
+
 
   const validateEmail = (email) => emailRegex.test(email);
 
@@ -26,6 +28,7 @@ const SendWorkSpaceInvite = () => {
       return;
     }
   
+
     try {
       const link = await generateLink(); 
       console.log('link', link)
@@ -49,15 +52,19 @@ const SendWorkSpaceInvite = () => {
     }
   };
 
-  //   useEffect(() => {
-  //     generateLink();
-  //   }, []);
+    // useEffect(() => {
+    //   generateLink();
+    // }, []);
+
+
 
   const generateLink = async () => {
+
     try {
       const eventId = localStorage.getItem("eventId");
       if (eventId) {
         const result = await generateWorkspaceLink({ eventId });
+        console.log('link generate hogya', result)
         const link = result.data.shareableLink;
         if (!link) {
           const result = await generateWorkspaceLink({ eventId });

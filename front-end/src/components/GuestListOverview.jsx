@@ -91,13 +91,13 @@ const GuestListOverview = ({ active, donutdata }) => {
     };
 
     useEffect(() => {
-      
-    
-    set_series_total_guest_list([Number(donutdata)]);
-    setTotalGuestLength(Number(donutdata));
-       console.log(donutdata, 'AGYA');
+
+
+        set_series_total_guest_list([Number(donutdata)]);
+        setTotalGuestLength(Number(donutdata));
+        console.log(donutdata, 'AGYA');
     }, [donutdata]);
-    
+
 
 
 
@@ -119,9 +119,17 @@ const GuestListOverview = ({ active, donutdata }) => {
                 <h5>Total Guests</h5>
                 <h2>{totalGuestLength}</h2>
 
-                <div className="donut-chart-content">
-                    <Chart options={options_total_guest_list} series={series_total_guest_list && series_total_guest_list.length > 0 ? series_total_guest_list : 0 } type="donut" />
-                </div>
+                {
+                    totalGuestLength > 0 ?
+                        <div className="donut-chart-content"> <Chart options={options_total_guest_list} series={series_total_guest_list && series_total_guest_list.length > 0 ? series_total_guest_list : 0} type="donut" />
+                        </div> :
+                        <div className='existing-guests-overview'>
+                            <h5>No Guests</h5>
+                          
+
+                        </div>
+                }
+
 
 
                 {/* 

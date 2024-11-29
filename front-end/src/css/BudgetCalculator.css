@@ -38,7 +38,7 @@
 
 .chart {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1fr;
+    grid-template-columns: 1.8fr 1.5fr 1fr;
     gap: 10px;
     margin: 2rem 0;
 }
@@ -46,6 +46,7 @@
 .total-cost {
     border-radius: 0.5rem;
     padding: 1rem;
+    border: 1px solid var(--border-color);
 }
 
 .max-due-root {
@@ -65,6 +66,7 @@
 .amount-due {
     border-radius: 0.5rem;
     padding: 1rem;
+    border: 1px solid var(--border-color);
 }
 
 .estimated-cost {

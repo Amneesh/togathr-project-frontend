@@ -14,7 +14,7 @@ const MainHeaderVendor = (props) => {
 
     const handleLogout = async () => {
         // try {
-            const vendorEmail = JSON.parse(localStorage.getItem("vendor-user-info")).email;
+        const vendorEmail = JSON.parse(localStorage.getItem("vendor-user-info")).email;
 
         const logoutData = {
             "email": vendorEmail,
@@ -22,11 +22,8 @@ const MainHeaderVendor = (props) => {
         }
         logoutUser(logoutData).then(response => {
             console.log('Response from createdData:', response);
-            console.log('vendor', result);
-                localStorage.removeItem("vendor-user-info");
-                navigate("/landingPage");
-
-
+            localStorage.removeItem("vendor-user-info");
+            navigate("/landingPage");
         })
             .catch(error => {
                 console.error('Failed to update data:', error);
@@ -40,14 +37,14 @@ const MainHeaderVendor = (props) => {
 
             <div className="left-section">
 
-                <div className="togather-vendor-logo" onClick={() => {setComponentActive('vendor-form')}}>
+                <div className="togather-vendor-logo" onClick={() => { setComponentActive('vendor-form') }}>
                     <img src={togathrVendorLogo} alt="logo" />
                 </div>
 
             </div>
 
 
-           
+
 
             <div className="right-section">
 
@@ -69,7 +66,7 @@ const MainHeaderVendor = (props) => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => {setComponentActive('user-profile')}}> User Profile</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { setComponentActive('user-profile') }}> User Profile</Dropdown.Item>
                         <Dropdown.Item onClick={handleLogout}>   Log out </Dropdown.Item>
 
 

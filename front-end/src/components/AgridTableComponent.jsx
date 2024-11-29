@@ -262,14 +262,13 @@ END:VCALENDAR`;
 
 
 
-    // for ai text generation start
 
-    const inference = new HfInference("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"); // Replace with your actual token
+    const inference = new HfInference("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"); 
 
     const handleTextQuery = async () => {
         setLoading(true);
-        setError(null); // Reset error state
-        setResponse(''); // Clear previous response
+        setError(null); 
+        setResponse(''); 
 
         try {
             const stream = inference.chatCompletionStream({
@@ -278,13 +277,12 @@ END:VCALENDAR`;
                 max_tokens: 500,
             });
 
-            // Collect the response chunks
+           
             let fullResponse = '';
             for await (const chunk of stream) {
                 fullResponse += chunk.choices[0]?.delta?.content || "";
-                setResponse(fullResponse); // Update response in real-time
+                setResponse(fullResponse); 
                 setTemplateInputValue(fullResponse);
-
             }
         } catch (err) {
             setError(err.message);
@@ -361,7 +359,8 @@ END:VCALENDAR`;
         const data  = {
             "email":JSON.stringify(email),
             "subject":subject,
-            "message":message,
+            "message":message + ` <p>Please respond to this email by clicking one of the links below:</p>
+            <p><a href="https://email-rsvp-page.vercel.app/?email=${email}&name=${nameOfGuest}">Invitation form</a></p>`,
             "nameOfGuest":nameOfGuest,
             "guestAllData":JSON.stringify(guestAllData),
 

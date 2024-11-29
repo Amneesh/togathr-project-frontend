@@ -11,6 +11,7 @@ import UserProfile from "./UserProfile";
 import {
   readDataFromMongoWithParam,
   readCollaboratorsEventsFromMongo,
+  readDataFromMongoBasedOnEmail,
 } from '../../api/mongoRoutingFile';
 
 const MainContent = ({
@@ -48,11 +49,14 @@ const MainContent = ({
       if (userData && userData.email) {
 
         try {
-          const queryParams = new URLSearchParams({
-            collaborators: {$in: [userData.email]}
-          }).toString();
-
-          const result = await readDataFromMongoWithParam('events', queryParams);
+          const queryParams = {
+            and: [
+              { collaborators: { $in: [userData.email] } },
+            ]
+        };
+    
+    
+          const result = await readDataFromMongoWithParam('events', JSON.stringify(queryParams));
 
           if (result && result.length > 0) {
             console.log(result + '6666666666');
@@ -63,6 +67,20 @@ const MainContent = ({
         }catch (error) {
           console.error('Error checking event:', error);
         }
+
+
+        // try {
+        //   const result = await readDataFromMongoBasedOnEmail('events', userData.email);
+
+        //   if (result && result.length > 0) {
+        //     console.log(result + '6666666666');
+        //     setMyEvents(result);
+        //   } else {
+        //     console.log(false);
+        //   }
+        // }catch (error) {
+        //   console.error('Error checking event:', error);
+        // }
 
         // try {
 

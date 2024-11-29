@@ -91,16 +91,19 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
 
     const handleCheckBookedEvent = async () => {
         try {
-            const queryParams = new URLSearchParams({
-                business_id: vendorID,
-                eventID: eventID,
-                email: userEmail,
-            }).toString();
 
-            const result = await readDataFromMongoWithParam('booked_vendors', queryParams);
+            const queryParams = {
+                and: [
+                    { business_id: vendorID },
+                    { eventID: eventID },
+                    { email: userEmail }
+                ]
+            };
+
+            const result = await readDataFromMongoWithParam('booked_vendors', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
-                console.log(result);
+                // console.log(result, 'sss');
                 setBookingData(result);
                 setBookedID(result[0]._id);
                 console.log(true);
@@ -118,13 +121,14 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
 
     const handleCheckFavEvent = async () => {
         try {
-            const queryParams = new URLSearchParams({
-                business_id: vendorID,
-                eventID: eventID,
-                email: userEmail,
-            }).toString();
-
-            const result = await readDataFromMongoWithParam('favorites', queryParams);
+            const queryParams = {
+                and: [
+                    { business_id: vendorID },
+                    { eventID: eventID },
+                    { email: userEmail }
+                ]
+            };
+            const result = await readDataFromMongoWithParam('favorites', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
                 console.log(result);
@@ -207,14 +211,15 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
     }
 
     const saveAsBudgetItem = (data) => {
-        const eventData = readSingleDataFromMongo('events', data.eventID).then(result => {
-            console.log('Event Data is here::::::::::: ', result);
-            console.log('Event ID::::::::::::', data.eventID)
-            const myEvent = result;
+        const eventData = readSingleDataFromMongo('events', data.eventID).then(res => {
+            console.log('Event Data is here::::::::::: ', res);
+            console.log('ENTIRE DATA::::::::::::', data)
+            const myEvent = res;
             const itemCategory = getBudgetItemCategory(data.business_type);
             let itemPrice = 0;
             try {
-                itemPrice = parseFloat(package_price);
+                // itemPrice = parseFloat(data.package_price);
+                itemPrice = parseFloat(data.package_price.substring(2));
             } catch (e) {
                 console.log(e);
             }
@@ -243,9 +248,15 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
                 }
             })
 
-            const budgetItemRes = addBudgetItemInDb('events', myEvent).then(res => {
-                showSnackbar('Added as a budget item.')
-            });
+
+            const eventId = myEvent._id;
+            delete myEvent._id;
+            const updatedEvent = myEvent;
+
+            const result = updateDataInMongo('events', eventId, updatedEvent).then(response => {
+                myEvent._id = eventId;
+                showSnackbar('Added as a budget item!');
+            })
         });
     }
 
@@ -346,11 +357,16 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
 
     const readReviews = async () => {
 
-        const queryParams = new URLSearchParams({
-            place_id: vendorID,
-        }).toString();
 
-        const result = await readDataFromMongoWithParam('reviews', queryParams);
+
+        const queryParams = {
+            and: [
+                { place_id: vendorID },
+
+            ]
+        };
+
+        const result = await readDataFromMongoWithParam('reviews', JSON.stringify(queryParams));
 
         if (result && result.length > 0) {
             console.log(result, '---------------------------');

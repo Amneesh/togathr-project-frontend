@@ -1,26 +1,48 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { signUpVendor } from "../../api/loginApi";
+import { signUpUser } from "../../api/loginApi";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "/src/resources/assets/Logo/vendor_logo.svg";
+import { useSnackbar } from '../components/SnackbarContext';
 
 const VendorSignUp = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const navigate = useNavigate();
+  const showSnackbar = useSnackbar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await signUpVendor({ name, email, password });
-    if (result.status == 201 || result.status == 200) {
-      navigate("/vendor-login");
-    } else if (result.status == 400) {
-      toast.error(result.response.data.message);
+
+    const signUpdata = {
+      "name": name,
+      "email": email,
+      "password": password,
+      "collectionName": "vendors"
+
     }
+    console.log(name + " " + email + " " + password);
+    // const result = await signUpUser({name, email, password});
+    // const result = await signUpUser(signUpdata);
+    signUpUser(signUpdata).then(response => {
+      console.log('Response from createdData:', response);
+      showSnackbar(response.message + " Please Login");
+      navigate("/vendor-login");
+
+
+    })
+      .catch(error => {
+        console.error('Failed to update data:', error);
+        showSnackbar('Oops!', `try again`, '#FBECE7');
+
+      });
+
+
+
   };
 
   return (

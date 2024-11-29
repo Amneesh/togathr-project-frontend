@@ -146,7 +146,6 @@ const MainGuestManagement = () => {
 
     useEffect(() => {
         AOS.init({
-            disable: "phone",
             duration: 700,
             easing: "ease-out-cubic",
         });
@@ -271,12 +270,16 @@ const MainGuestManagement = () => {
         const user_email = currentemailID;
 
         try {
-            const queryParams = new URLSearchParams({
-                user_email: user_email,
-                eventID: eventID,
-            }).toString();
+           
+            const queryParams = {
+                and: [
+                    { email: user_email},
+                    { eventID: eventID},
+                ]
+                // You can add more conditions here if needed
+            };
 
-            const result = await readDataFromMongoWithParam('guest_management', queryParams);
+            const result = await readDataFromMongoWithParam('guest_management', JSON.stringify(queryParams));
 
             if (result && result.length > 0) {
                 console.log(result + '6666666666');

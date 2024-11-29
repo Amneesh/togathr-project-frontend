@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Modal, TextField, Select, MenuItem, InputLabel } from '@mui/material';
 import '../css/BudgetCalculator.css';
 import '../css/AddBudgetItemModal.css'
-import { addBudgetItemInDb, getOverviewData } from '../../api/mongoRoutingFile';
+import { readSingleDataFromMongo, updateDataInMongo } from '../../api/mongoRoutingFile';
 import DonutChart from './DonutChart';
 import ProgressChartBar from './ProgressChartBar';
 import BudgetCategory from '../utils/BudgetCategory.js';
@@ -31,8 +31,8 @@ const BudgetCalculator = ({ eventId }) => {
     const fetchItems = async () => {
       try {
         // setItems([])
-        const response = await getOverviewData(eventId)
-        let eventData = response['event_data'];
+        const response = await readSingleDataFromMongo('events', eventId)
+        let eventData = response;
         setEvent(eventData);
         setItems(eventData.budgetItems);
 
@@ -162,37 +162,47 @@ const BudgetCalculator = ({ eventId }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (currentItem.id) {
-        event.budgetItems = event.budgetItems.map(item => (item.id === currentItem.id ? currentItem : item));
-      } else {
-        currentItem.id = Date.now();
-        event.budgetItems.push(currentItem);
-      }
+
+    if (currentItem.id) {
+      event.budgetItems = event.budgetItems.map(item => (item.id === currentItem.id ? currentItem : item));
+    } else {
+      currentItem.id = Date.now();
+      event.budgetItems.push(currentItem);
+    }
 
 
-      let sumOfBudgetEstimate = 0;
-      event.budgetItems.map(item => {
-        sumOfBudgetEstimate += parseFloat(item.totalCost && item.totalCost > 0 ? item.totalCost : item.estimateAmount);
-      });
+    let sumOfBudgetEstimate = 0;
+    event.budgetItems.map(item => {
+      sumOfBudgetEstimate += parseFloat(item.totalCost && item.totalCost > 0 ? item.totalCost : item.estimateAmount);
+    });
 
-      event.budgetItems.map(item => {
-        item.budgetPercent = (((item.totalCost && item.totalCost > 0 ? item.totalCost : item.estimateAmount) / sumOfBudgetEstimate) * 100).toFixed(2);
-      })
-      const response = await addBudgetItemInDb('events', event);
+    event.budgetItems.map(item => {
+      item.budgetPercent = (((item.totalCost && item.totalCost > 0 ? item.totalCost : item.estimateAmount) / sumOfBudgetEstimate) * 100).toFixed(2);
+    })
 
-      setItems(response.budgetItems);
+    console.log(event, "kapil's event");
+
+    const eventId = event._id;
+    delete event._id;
+    const data = event;
+    console.log('data to be updated::::::::::::::::::::::::::::', data);
+    console.log('EventID:::::::::::', eventId);
+    updateDataInMongo('events', eventId, data).then(response => {
+      console.log('MY DATAAAAAAAAAA', response);
+      //  showSnackbar('Item Added');
+      event._id = eventId;
+      setItems(response.updatedData.budgetItems);
 
       // Show the table with items
       setDataPresent(true);
 
       // To refresh chart data
-      setBudgetCategories(response.budgetItems);
+      setBudgetCategories(response.updatedData.budgetItems);
 
       let due = 0;
       let paid = 0;
       let total = 0;
-      response.budgetItems.forEach(item => {
+      response.updatedData.budgetItems.forEach(item => {
         due += parseFloat(parseFloat(item.dueAmount) ? parseFloat(item.dueAmount) : 0);
         paid += parseFloat(parseFloat(item.paidAmount) ? parseFloat(item.paidAmount) : 0);
         total += parseFloat(parseFloat(item.totalCost) ? parseFloat(item.totalCost) : 0) && parseFloat(item.totalCost ? item.totalCost : 0) > 0 ? parseFloat(item.totalCost ? item.totalCost : 0) : parseFloat(item.estimateAmount ? item.estimateAmount : 0);
@@ -205,9 +215,16 @@ const BudgetCalculator = ({ eventId }) => {
       setTotalCost(total);
 
       handleClose();
-    } catch (error) {
-      console.error('Error saving budget item:', error);
-    }
+
+    }).catch(error => {
+      console.error('Failed to update data:', error);
+    });
+    // const response = await addBudgetItemInDb('events', data);
+
+
+
+
+
   };
 
   const handleEdit = (item) => {
@@ -222,7 +239,7 @@ const BudgetCalculator = ({ eventId }) => {
     handleOpen();
   };
 
-  const handleDelete = async (itemToDelete) => {
+  const handleDelete = (itemToDelete) => {
     const confirmed = window.confirm('Are you sure you want to delete the budget item?');
 
     if (confirmed) {
@@ -238,30 +255,36 @@ const BudgetCalculator = ({ eventId }) => {
       event.budgetItems.map(item => {
         item.budgetPercent = (((item.totalCost && item.totalCost > 0 ? item.totalCost : item.estimateAmount) / sumOfBudget) * 100).toFixed(2);
       })
-      const response = await addBudgetItemInDb('events', event);
 
-      if (event.budgetItems.length == 0) {
-        setDataPresent(false);
-      }
-      // To refresh chart data
-      setBudgetCategories(response.budgetItems);
+      const eventId = event._id;
+      delete event._id;
+      const data = event;
 
-      let due = 0;
-      let paid = 0;
-      let total = 0;
-      response.budgetItems.forEach(item => {
-        due += parseFloat(parseFloat(item.dueAmount) ? parseFloat(item.dueAmount) : 0);
-        paid += parseFloat(parseFloat(item.paidAmount) ? parseFloat(item.paidAmount) : 0);
-        total += parseFloat(parseFloat(item.totalCost) ? parseFloat(item.totalCost) : 0) && parseFloat(item.totalCost ? item.totalCost : 0) > 0 ? parseFloat(item.totalCost ? item.totalCost : 0) : parseFloat(item.estimateAmount ? item.estimateAmount : 0);
+      const result = updateDataInMongo('events', eventId, data).then(response => {
+        event._id = eventId;
+        if (event.budgetItems.length == 0) {
+          setDataPresent(false);
+        }
+        // To refresh chart data
+        setBudgetCategories(response.updatedData.budgetItems);
+
+        let due = 0;
+        let paid = 0;
+        let total = 0;
+        response.updatedData.budgetItems.forEach(item => {
+          due += parseFloat(parseFloat(item.dueAmount) ? parseFloat(item.dueAmount) : 0);
+          paid += parseFloat(parseFloat(item.paidAmount) ? parseFloat(item.paidAmount) : 0);
+          total += parseFloat(parseFloat(item.totalCost) ? parseFloat(item.totalCost) : 0) && parseFloat(item.totalCost ? item.totalCost : 0) > 0 ? parseFloat(item.totalCost ? item.totalCost : 0) : parseFloat(item.estimateAmount ? item.estimateAmount : 0);
+        });
+
+        setTotalDue(due);
+
+        setAmountPaid(paid);
+
+        setTotalCost(total);
+        console.log('State of budgetItems: ', response.updatedData.budgetItems);
+        setItems(response.updatedData.budgetItems);
       });
-
-      setTotalDue(due);
-
-      setAmountPaid(paid);
-
-      setTotalCost(total);
-      console.log('State of budgetItems: ', response.budgetItems);
-      setItems(response.budgetItems);
     }
   }
 
@@ -330,7 +353,9 @@ const BudgetCalculator = ({ eventId }) => {
                       <h4>Actual Cost:</h4>
                       {!isMobile ?
                         <DonutChart data={totalCostData} labels={chartLabels} position={'right'}></DonutChart> :
-                        <DonutChart data={totalCostData} labels={chartLabels} position={'bottom'}></DonutChart>}
+                        <div className='web-total-cost'>
+                          <DonutChart data={totalCostData} labels={chartLabels} position={'bottom'}></DonutChart>
+                        </div>}
                     </div>
                     <div className="max-due-root">
                       <div className="max-budget">

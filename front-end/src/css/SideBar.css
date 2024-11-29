@@ -8,7 +8,13 @@ nav {
   padding: 1rem 1rem;
 }
 
-nav .nav-item {
+
+nav .nav-item:hover {
+  background-color: white;
+  border-radius: 2rem;
+}
+
+.nav-item {
   display: flex;
   color: var(--primary-black);
   gap: 1rem;
@@ -16,19 +22,23 @@ nav .nav-item {
   padding: 1rem 3rem 1rem 1rem;
   transition: ease-in-out 0.5s;
   border-radius: 2rem;
-
-
+  font-family: "Noto Sans", 'Meta Pro', sans-serif;
+  font-size: 16px;
 }
 
-nav .nav-item:hover {
+.nav-item.active svg path {
+  fill: var(--primary-purple);
+}
+
+.sidebar-container nav .nav-item.active {
   background-color: white;
-  border-radius: 2rem;
+  color: var(--primary-purple);
 }
 
 .sidebar-container .logo-container {
   display: flex;
   justify-content: start;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 1rem 0.5rem;
   cursor: pointer;
 }
   
@@ -36,7 +46,7 @@ nav .nav-item:hover {
   justify-content: space-between;
   align-items: center;
   color: black;
-  width: 120px;
+  width: 130px;
 }
 
 .nav-links {

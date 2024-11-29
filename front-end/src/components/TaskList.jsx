@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import {
   getCollaboratorsName,
-  openAI,
   getTasksBasedOnIdFromDB,
   getCollaboratorName,
   addTaskToList,

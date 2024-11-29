@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import logo from "/src/resources/assets/Logo/whitelogo_togathr.svg";
 import { useSnackbar } from '../components/SnackbarContext.jsx';
-// import bcrypt from 'bcryptjs'; // Import bcrypt
+// import bcrypt from 'bcrypt';
 
 export const SignUp = () => {
   const showSnackbar = useSnackbar();

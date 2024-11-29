@@ -4,7 +4,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import {
-  googleAuth,
+
   loginUser,
   getAllDataOfUser,
   openAI,
@@ -62,30 +62,7 @@ export const Login = () => {
           showSnackbar('Oops!', `Try again`, '#FBECE7');
 
         });
-      // const result = await googleAuth(authResult["code"]);
-      // const { email, name, image, type } = result.data.user;
-      // const token = result.data.token;
-      // const obj = { email, name, image, token, type };
-
-      // localStorage.setItem("user-info", JSON.stringify(obj));
-      // const redirectUrl = location.state?.from;
-      // console.log('redirectURL', redirectUrl);
-
-      //     await getUpdatedData(email, token);
-
-      //     if (!hasWorkspace) {
-      //       console.log("nav");
-      //       navigate("/homePage");
-      //     } else {
-      //       navigate("/joinWorkspace");
-      //     }
-      //     //  setTimeout(() => {
-      //     //       getUpdatedData(email);
-      //     //  }, 1000);
-      //   }
-      // } catch (error) {
-      //   console.log("Error while requesting google", error);
-      // }
+    
     };
   }
 

@@ -35,7 +35,6 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
 
     useEffect(() => {
         AOS.init({
-            disable: "phone",
             duration: 700,
             easing: "ease-out-cubic",
         });
@@ -184,7 +183,7 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                 : ''}
 
             {isMenuOpen && (
-                <div className="full-screen-menu" data-aos="fade-right">
+                <div className="full-screen-menu" >
                     <div className='mobile-nav-header'>
                         <a href='#' className='close-menu' onClick={toggleMenu}><i className="fa-solid fa-close"></i></a>
                         <div className='logo-section'>
@@ -388,6 +387,8 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                 <div className="left-section">
                     <div>
                         <Modal
+
+
                             buttonClassName="button-green-fill"
                             buttonId="createNewSheet "
                             buttonLabel="Create New Event"
@@ -410,13 +411,6 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                                         onChange={(e) => setEventType(e.target.value)}
                                         required
                                     />
-                                    {/* <input
-                                    type="text"
-                                    placeholder="Location"
-                                    value={location}
-                                    onChange={(e) => setLocation(e.target.value)}
-                                    required
-                                /> */}
                                     <PlacesAutocomplete value={location} onChange={setLocation} select={handleSelect} >
                                         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
                                             <div>
@@ -494,29 +488,32 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
             <div className="right-section">
 
 
-                <Dropdown>
-                    <Dropdown.Toggle
-                        as="span"
-                        variant="success"
-                        id="dropdown-basic"
+                <div>
+                    <Dropdown>
+                        <Dropdown.Toggle
+                            as="span"
+                            variant="success"
+                            id="dropdown-basic"
 
-                    >
-                        <div className="user-image">
+                        >
+                            <div className="user-image">
 
-                            {userInfo && userInfo.image != '' ?
-                                <img src={userInfo.image} alt="profileImage" />
-                                :
-                                <></>}
-                        </div>
-                    </Dropdown.Toggle>
+                                {userInfo && userInfo.image != '' ?
+                                
+                                    <img src={userInfo.image} alt="profileImage" />
+                                    :
+                                    <></>}
+                            </div>
+                        </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => { setActiveItem('user_profile') }}> User Profile</Dropdown.Item>
-                        <Dropdown.Item onClick={handleLogout}>   Log out </Dropdown.Item>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => { setActiveItem('user_profile') }}> User Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handleLogout}>   Log out </Dropdown.Item>
 
 
-                    </Dropdown.Menu>
-                </Dropdown>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
 
             </div>
         </header >

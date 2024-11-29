@@ -756,7 +756,8 @@ html {
 
   .addGuestCard {
     width: 100%;
-    max-width: 450px;
+    max-width: 400px;
+    height: 200px;
    
     display: grid;
     grid-template-rows: 1fr 1fr;
@@ -1218,13 +1219,20 @@ guest-donut,
     }
 
   }
-
+  .overview-tasks-header h2{
+    font-size: clamp(20px, 4vw, 25px);
+  }
   .overview-tasks-para {
     padding: 1rem;
   }
 
+  .todo-list h4{
+    font-size: clamp(16px, 4vw, 20px);
+  }
+
   .todo-list {
     padding: 1rem;
+   
 
     .todo-list-items {
       max-height: 300px;
@@ -1391,6 +1399,12 @@ guest-donut,
 }
 
 /* user-profile */
+.vendor-profile-container-page{
+  padding: 3rem 2rem;
+max-width: 1400px;
+margin: 0 auto;
+
+}
 .user-profile-main-container {
   min-height: 100vh;
   display: flex;
@@ -1603,7 +1617,7 @@ guest-donut,
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 3rem;
   padding: 2rem;
 
 
@@ -1705,9 +1719,13 @@ guest-donut,
 .guest-add-overview-header{
   width: 100%;
   display: flex;
-  flex-flow: row;
+  flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
+}
+
+.guest-add-overview-header h3{
+  font-size: clamp(20px, 4vw, 25px);
 }
 
 /* overview */
@@ -1831,6 +1849,9 @@ guest-donut,
   gap: 1rem;
 
 
+}
+.vendor-main-overview h3{
+  font-size: clamp(20px, 4vw, 25px);
 }
 
 .vendor-main-overview-footer {
@@ -2390,6 +2411,10 @@ guest-donut,
     align-items: center;
   }
 
+  .all-clbs-overview-header h3{
+    font-size: clamp(20px, 4vw, 25px);
+  }
+
 
   .all-clbs-overview-body {
     display: grid;
@@ -2623,8 +2648,8 @@ input[type=text] {
   grid-template-columns: 1fr;
 
   .vendor-custom-card {
-    border-radius: 10px;
-    border: 1px solid black;
+    border-radius: 20px;
+    border: 1px solid #ADADAD;
     overflow: hidden;
   }
 
@@ -2680,11 +2705,14 @@ img.image2 {
   gap: 1rem; */
   display: grid;
   grid-template-columns: 1fr;
-  gap: .5rem;
+  gap: 3rem;
 
 
 
   .vendor-category-card {
+    max-width: 400px;
+    margin: 0 auto;
+
     position: relative;
     border-radius: 6.7px;
     overflow: hidden;
@@ -2699,7 +2727,7 @@ img.image2 {
       bottom: 0;
       color: white;
       padding: 1rem;
-
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0.7, 0.1) 70%);
       width: 100%;
     }
 
@@ -2730,7 +2758,7 @@ img.image2 {
   .vendor-category-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: .5rem;
+
   }
 
   .vendor-all-cards {
@@ -2749,6 +2777,8 @@ img.image2 {
   .vendor-category-cards {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+ 
+
   }
 
   .vendor-all-cards {
@@ -2770,12 +2800,14 @@ img.image2 {
 
 /* vendor end */
 .existing-guests-overview {
-  overflow: scroll;
-  gap: 0.3rem;
-  width: 50%;
+  background-color: var(--secondary-purple);
+  width: 100%;
+  max-height: 200px;
+  padding: 4rem 0rem 4rem 0.5rem;
+  border-radius: 10px;
   display: flex;
-  flex-flow: column;
-  justify-content: flex-start;
+  justify-content: center;
+  
 }
 
 .existing-guest-card-overview {
@@ -3356,6 +3388,8 @@ img.image2 {
 }
 
 
+
+
 .vendor-togather-description-page{
   min-height: 100vh;
 }
@@ -3384,13 +3418,14 @@ max-height: 600px;
 
       img{
         width: 1100px;
-    
         object-fit: cover;
       }
 
 
 
     }
+
+    
     .vendor-detail-content{
       display: flex;
       flex-flow: row;
@@ -3413,12 +3448,15 @@ max-height: 600px;
 
      .vendor-detail-content-right{
       display: flex;
-      flex-flow: row wrap;
+      flex-flow: row;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 1.9rem;
      }
     }
   }
+
+ 
 
 .vendor-detail-page-content{
 display: flex;
@@ -3446,6 +3484,8 @@ gap: 1rem;
   flex-flow: column;
   text-align: center;
   .vendor-package-list{
+    border: 1px solid #ADADAD;
+    border-radius: 20px;
     text-align: left;
   }
 }

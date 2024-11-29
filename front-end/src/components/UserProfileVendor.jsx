@@ -3,13 +3,16 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'
 
 import Modal from './ModalPopupBox';
-import { updateVendorData, getAllDataOfVendor, checkVendorPasswordValidation, updateVendorPassword, vendorLogout } from '../../api/loginApi.js';
+import { updateVendorData, getAllDataOfVendor, checkVendorPasswordValidation, updateVendorPassword } from '../../api/loginApi.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {
+    readDataFromMongoWithParam,
+} from '../../api/mongoRoutingFile';
 // import togatherImage from "../resources/assets/Images/togather-image-1.jpg"
 
-
 import { useNavigate } from "react-router-dom";
+import { updateDataInMongo } from '../../api/mongoRoutingFile';
 
 
 export default function UserProfileVendor() {
@@ -29,6 +32,9 @@ export default function UserProfileVendor() {
     const [validatePassword, setValidatePassword] = useState(false);
     const [token, setToken] = useState(vendorInfo ? vendorInfo.token : "");
 
+    const [vendorInfoMongo, setVendorInfoMongo] = useState(null);
+    const [vendorInfoMongoID, setVendorInfoMongoID] = useState(null);
+
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -39,6 +45,8 @@ export default function UserProfileVendor() {
 
     const [passwordUpdateMessage, setpasswordUpdateMessage] = useState('');
     // Update the user info when component mounts
+    const [downloadURL, setDownloadURL] = useState("");
+    const [pastEvents, setPastEvents] = useState([]);
 
 
     const [visible1, setVisible1] = useState(false);
@@ -48,21 +56,22 @@ export default function UserProfileVendor() {
 
     const [userDP, setUserDP] = useState(null);
     const [uploading, setUploading] = useState(false);
-   
 
 
-    const togglePassword = (index) => {
-        if (index == '1') {
-            setVisible1(!visible1);
-        }
-        if (index == '2') {
-            setVisible2(!visible2);
-        }
-        if (index == '3') {
-            setVisible3(!visible3);
-        }
 
-    };
+    // const togglePassword = (index) => {
+    //     if (index == '1') {
+    //         setVisible1(!visible1);
+    //     }
+    //     if (index == '2') {
+    //         setVisible2(!visible2);
+    //     }
+    //     if (index == '3') {
+    //         setVisible3(!visible3);
+    //     }
+
+    // };
+
 
 
 
@@ -77,39 +86,34 @@ export default function UserProfileVendor() {
             alert("Please select a file to upload.");
             return;
         }
-        const emailWhole = email + "_vendor"
 
         const formData = new FormData();
-        formData.append('image', userDP);
-        formData.append('emailWhole', emailWhole);
-        formData.append('email', email);
-        formData.append('portalType', 'vendor');
+        formData.append("file", userDP);
 
-
-        setUploading(true);
+        // Debug FormData
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
 
         try {
-            const response = await axios.post('http://localhost:3031/uploadDP', formData, {
+            //   setUploadStatus("Uploading...");
+            const response = await axios.post("https://togather-project-backend.vercel.app/api/uploadImage", formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    "Content-Type": "multipart/form-data",
                 },
             });
 
-            console.log(response.data.mongoResponse, 'rrr');
-            if (response.data.mongoResponse) {
-                console.log('-------', response.data.imageURL );
-                setVendorImage(response.data.imageURL);
-                setVendorInfo(prev => ({ ...prev, image: response.data.imageURL }));
-                toast("Image updated successfully");
-                getUpdatedData(email);
+            //   setUploadStatus("File uploaded successfully!");
+            console.log(response.data.downloadURL);
+            setDownloadURL(response.data.downloadURL);
+            getUpdatedData(vendorInfoMongo, response.data.downloadURL);
+            updateDataToMongo(response.data.downloadURL);
 
-            }
         } catch (error) {
             console.error("Error uploading file:", error);
-            setMessage("Error uploading file: " + error.response.data);
-        } finally {
-            setUploading(false);
+            //   setUploadStatus("Failed to upload file.");
         }
+
     };
 
     // const handleAwsImages = async () => {
@@ -123,37 +127,37 @@ export default function UserProfileVendor() {
 
     // }
 
-    const handleNewPasswordChange = (e) => {
-        setNewPassword(e.target.value);
-        checkPasswordsMatch(e.target.value, confirmPassword);
-    };
+    // const handleNewPasswordChange = (e) => {
+    //     setNewPassword(e.target.value);
+    //     checkPasswordsMatch(e.target.value, confirmPassword);
+    // };
 
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        checkPasswordsMatch(newPassword, e.target.value);
+    // const handleConfirmPasswordChange = (e) => {
+    //     setConfirmPassword(e.target.value);
+    //     checkPasswordsMatch(newPassword, e.target.value);
 
-    };
+    // };
 
-    const checkPasswordsMatch = (newPass, confirmPass) => {
-        setpasswordUpdateMessage('');
+    // const checkPasswordsMatch = (newPass, confirmPass) => {
+    //     setpasswordUpdateMessage('');
 
-        if (newPass === confirmPass && newPass != '' && newPass != '') {
-            setPasswordsMatch(true);
-            setPasswordsMatchValidate(true);
-            console.log(true);
+    //     if (newPass === confirmPass && newPass != '' && newPass != '') {
+    //         setPasswordsMatch(true);
+    //         setPasswordsMatchValidate(true);
+    //         console.log(true);
 
-        } else {
-            setPasswordsMatch(false);
-            setPasswordsMatchValidate(false);
-            console.log(false);
+    //     } else {
+    //         setPasswordsMatch(false);
+    //         setPasswordsMatchValidate(false);
+    //         console.log(false);
 
-        }
-    };
+    //     }
+    // };
 
     useEffect(() => {
 
         console.log(vendorImage);
-        
+
     }, [vendorImage])
 
     useEffect(() => {
@@ -164,8 +168,65 @@ export default function UserProfileVendor() {
     useEffect(() => {
 
 
+        const fetchUserData = async () => {
+            try {
+                const queryParams = {
+                    and: [
+                        { email: email }
+                    ]
+                };
+
+
+                const result = await readDataFromMongoWithParam('vendors', JSON.stringify(queryParams));
+
+                if (result && result.length > 0) {
+                    console.log(result[0], 'agya vendor data');
+                    setVendorInfoMongo(result[0]);
+                    setVendorInfoMongoID(result[0]._id);
+                } else {
+                    console.log(false);
+                }
+            } catch (error) {
+                console.error('Error checking event:', error);
+            }
+        }
+
+        fetchUserData();
+
+    }, [email])
+
+
+    useEffect(() => {
+
+
+
         const fetchPastEvents = async () => {
 
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000
+
+                // Define your query parameters
+                const queryParams = {
+                    and: [
+                        { collaborators: { $in: [email] } },
+
+                        { eventDate: { $lt: today } } // Assuming 'eventDate' is the field storing the event date
+                    ]
+                };
+
+                // Fetch data from MongoDB
+                const result = await readDataFromMongoWithParam('events', JSON.stringify(queryParams));
+
+                if (result && result.length > 0) {
+                    console.log(result, 'agya user past events');
+                    setPastEvents(result);
+                } else {
+                    console.log(false);
+                }
+            } catch (error) {
+                console.error('Error checking event:', error);
+            }
         };
 
         if (email) { // Fetch only if email is provided
@@ -176,142 +237,139 @@ export default function UserProfileVendor() {
 
 
     const handleDeleteImage = async () => {
-        const emailWhole = email + "_vendor"
-        try {
-            const response = await axios.delete('http://localhost:3031/deleteDP', {
-                data: { emailWhole ,email, portalType: 'vendor' }
-            });
-
-            console.log(response.data.mongoResponse, 'rrr');
-            if (response.data.mongoResponse) {
-                setVendorImage('https://togather-aws-image.s3.us-east-1.amazonaws.com/anonymous-image.png');
-                setVendorInfo(prev => ({ ...prev, image: 'https://togather-aws-image.s3.us-east-1.amazonaws.com/anonymous-image.png' }));
-                toast("Image deleted successfully");
-                getUpdatedData(email);
-
-            }
-        } catch (error) {
-            console.error("Error uploading file:", error);
-            setMessage("Error uploading file: " + error.response.data);
-        } finally {
-            setUploading(false);
-        }
+        const imageUrl = 'https://firebasestorage.googleapis.com/v0/b/demofb29.appspot.com/o/anonymous-image.png?alt=media&token=90a2189e-51c1-4743-b12f-470d3b487623';
+        setVendorImage(imageUrl);
+        getUpdatedData(vendorInfoMongo, imageUrl);
+        updateDataToMongo(imageUrl);
 
     };
 
     const handleUserDataUpdate = async () => {
 
-        if (newPassword != '' && confirmPassword != '' && passwordsMatch) {
+        // if (newPassword != '' && confirmPassword != '' && passwordsMatch) {
 
-            const response = await updateVendorPassword(newPassword, email);
-            console.log(response.data.passwordUpdate);
-            setpasswordUpdateMessage(response.data.passwordUpdate)
-        }
-        try {
-            const obj = {
-                email,
-                name: userName,
-                firstName,
-                lastName,
-                phone: phone,
-                image: vendorImage,
+        //     const response = await updateVendorPassword(newPassword, email);
+        //     console.log(response.data.passwordUpdate);
+        //     setpasswordUpdateMessage(response.data.passwordUpdate)
+        // }
 
-
-            };
-            console.log(obj);
-            const response = await updateVendorData(obj);
-            console.log(response);
-            toast("Data updated successfully");
-            getUpdatedData(email);
-        } catch {
-            console.log("Error updating user data");
-        }
-    };
-
-    const getUpdatedData = async (email) => {
-       
-        try {
-            const response = await getAllDataOfVendor(email);
-            setVendorInfo(response.data);
-            console.log(response.data.vendor);
-            localStorage.setItem('vendor-user-info', JSON.stringify(
-                {
-                    firstName: response.data.vendor.firstName,
-                    lastName: response.data.vendor.lastName,
-                    email: response.data.vendor.email,
-                    phone: response.data.vendor.phone,
-                    name: response.data.vendor.name,
-                    image: response.data.vendor.image,
-                    type: response.data.vendor.type,
-                    token: token
-                }
-            ))
-        } catch {
-            console.log("Error fetching user data");
-        }
-    };
-
-    const handlePasswordValidate = async () => {
-        try {
-            console.log(currentPassword, email);
-            const response = await checkVendorPasswordValidation(currentPassword, email);
-            console.log(response.data.passwordValue);
-            setPasswordMessage(response.data.message);
-            if (response.data.passwordValue) {
-                setValidatePassword(true);
-            } else {
-                setValidatePassword(false);
-            }
-        } catch {
-            setValidatePassword(false);
-            setPasswordMessage("Error validating password");
-            console.log("Error validating password");
-        }
-    }
-
-    // const handleLogout = async () => {
-    //     try {
-    //         const vendorEmail = JSON.parse(localStorage.getItem("vendor-user-info")).email;
-    //         const result = await vendorLogout({ vendorEmail });
-
-    //         console.log('vendor', result);
-    //         if (result.status === 200) {
-    //             console.log('vendor', result);
-    //             localStorage.removeItem("vendor-user-info");
-    //             navigate("/landingPage");
-    //         } else {
-    //             console.log(result);
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-
-    const handleLogout = async () => {
-        // try {
-            const vendorEmail = JSON.parse(localStorage.getItem("vendor-user-info")).email;
-
-        const logoutData = {
-            "email": vendorEmail,
-            "collectionName": "vendors"
-        }
-        logoutUser(logoutData).then(response => {
-            console.log('Response from createdData:', response);
-            console.log('vendor', result);
-                localStorage.removeItem("vendor-user-info");
-                navigate("/landingPage");
+        const obj = {
+            email,
+            name: userName,
+            firstName,
+            lastName,
+            phone: phone,
+            image: vendorImage,
 
 
+        };
+        updateDataInMongo('vendors', vendorInfoMongoID, obj).then(response => {
+            console.log('Response from updateData:', response.updatedData);
+            setVendorInfo(response.updatedData);
+            getUpdatedData(response.updatedData, vendorImage);
+            // toast('Data update successfully');
         })
             .catch(error => {
                 console.error('Failed to update data:', error);
             });
 
+
     };
 
 
+
+
+    const updateDataToMongo = async (imageUrl) => {
+        const data = vendorInfoMongo;
+        console.log(vendorInfoMongo, 'ss');
+        delete vendorInfoMongo.token;
+        delete vendorInfoMongo._id;
+
+        const update_data = {
+            ...data,
+            image: imageUrl
+        }
+
+        
+        updateDataInMongo('vendors', vendorInfoMongoID, update_data).then(response => {
+            console.log('Response from updateData:', response.updatedData);
+
+        })
+            .catch(error => {
+                console.error('Failed to update data:', error);
+            });
+    }
+
+
+
+
+
+
+
+    const getUpdatedData = async (response, userImage) => {
+        localStorage.setItem('vendor-user-info', JSON.stringify(
+            {
+               
+                ...response,
+                image: userImage,
+                token: token
+            }
+        ))
+
+        setVendorInfo(JSON.parse(localStorage.getItem('user-info')));
+        setVendorImage(userImage);
+
+        // } catch {
+        //     console.log("Error fetching user data");
+        // }
+    };
+
+
+    // const handlePasswordValidate = async () => {
+    //     try {
+    //         console.log(currentPassword, email);
+    //         const response = await checkVendorPasswordValidation(currentPassword, email);
+    //         console.log(response.data.passwordValue);
+    //         setPasswordMessage(response.data.message);
+    //         if (response.data.passwordValue) {
+    //             setValidatePassword(true);
+    //         } else {
+    //             setValidatePassword(false);
+    //         }
+    //     } catch {
+    //         setValidatePassword(false);
+    //         setPasswordMessage("Error validating password");
+    //         console.log("Error validating password");
+    //     }
+    // }
+
+
+
+    // const handleLogout = async () => {
+    //     // try {
+    //         const vendorEmail = JSON.parse(localStorage.getItem("vendor-user-info")).email;
+
+    //     const logoutData = {
+    //         "email": vendorEmail,
+    //         "collectionName": "vendors"
+    //     }
+    //     logoutUser(logoutData).then(response => {
+    //         console.log('Response from createdData:', response);
+    //         console.log('vendor', result);
+    //             localStorage.removeItem("vendor-user-info");
+    //             navigate("/landingPage");
+
+
+    //     })
+    //         .catch(error => {
+    //             console.error('Failed to update data:', error);
+    //         });
+
+    // };
+
+
     return (
-        <>
+        <div className='vendor-profile-container-page'>
             <div className="user-profile-main-container">
                 <div className="user-profile-main-header">
 
@@ -391,7 +449,7 @@ export default function UserProfileVendor() {
                                     </div>
                                 </section>
                                 <hr />
-                                {vendorInfo.type === 'appLogin' && (
+                                {/* {vendorInfo.type === 'appLogin' && (
                                     <>
 
                                         <section className='password-section'>
@@ -473,11 +531,15 @@ export default function UserProfileVendor() {
                                             : <></>}
                                         <hr />
                                     </>
-                                )}
+                                )} */}
                                 <section className="user-form-buttons">
                                     <button type="button" className="button-purple">Cancel</button>
                                     <button type="button" className="button-purple-fill" onClick={handleUserDataUpdate}>Save Changes</button>
-                                    <button onClick={handleLogout} className="button-green-fill"> Logout </button>
+                                    {/* <button onClick={handleLogout} className="button-green-fill"> Logout </button> */}
+                                </section>
+
+                                <section>
+
                                 </section>
                             </form>
                         </section>
@@ -485,6 +547,6 @@ export default function UserProfileVendor() {
 
                 </div>
             </div>
-        </>
+        </div>
     );
 }

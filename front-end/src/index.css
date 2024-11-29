@@ -430,8 +430,8 @@ span{
 
 @media only screen and (min-width: 600px){
   .main-content {
-    padding: 1rem 5rem;
-   
+    padding: 1rem 2rem;
+   padding-top: 0rem;
     margin: auto;
   }
 }
@@ -532,10 +532,14 @@ span{
 }
 
 .button-green {
-  color: var(--primary-green);
+  background-color: transparent;
+  color: black;
   padding: 5px 20px;
   border: 1px solid var(--primary-green);
   border-radius: 30px;
+}
+.button-white-fill{
+  color: var(--primary-white);
 }
 
 .container {
@@ -689,3 +693,77 @@ width: 100% !important;
   color: var(--primary-purple) !important;
   cursor: pointer;
 }
+
+
+/* togathr-loader */
+
+/* From Uiverse.io by alexruix */ 
+.togathr-loader {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  margin: 0 auto;
+}
+
+.togathr-loader:before {
+  content: "";
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background: transparent;
+  background-size: cover;
+  background-position: center;
+  background-image: url('./resources/assets/Logo/icon-logo.png');
+  animation: loading-bounce 0.5s ease-in-out infinite alternate;
+}
+
+.togathr-loader:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 7px;
+  width: 65px;
+  border-color: #000000;
+  border-radius: 14px;
+  box-shadow: 0 5px 0 #000000, -35px 50px 0 #000000, -70px 95px 0 #000000;
+  animation: loading-step 1s ease-in-out infinite;
+}
+
+@keyframes loading-bounce {
+  0% {
+    transform: scale(1, 0.7);
+  }
+
+  40% {
+    transform: scale(0.8, 1.2);
+  }
+
+  60% {
+    transform: scale(1, 1);
+  }
+
+  100% {
+    bottom: 140px;
+  }
+}
+
+@keyframes loading-step {
+  0% {
+    box-shadow: 0 10px 0 var(--primary-purple),
+            0 10px 0 var(--primary-purple),
+            -35px 50px 0 var(--primary-purple),
+            -70px 90px 0 var(--primary-purple);
+  }
+
+  100% {
+    box-shadow: 0 10px 0 #f2f2f2,
+            -35px 50px 0 #f2f2f2,
+            -70px 90px 0 #f2f2f2,
+            -70px 90px 0 var(--primary-purple);
+  }
+}
+

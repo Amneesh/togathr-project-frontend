@@ -18,9 +18,11 @@ export async function createDataInMongo(collectionName, data) {
 }
 
 export async function readDataFromMongoWithParam(collectionName, queryParams) {
+  console.log(queryParams, 'wutu');
   try {
     // Construct the URL
-    const url = `${liveURL}?collectionName=${collectionName}&queryParams=${queryParams}`;
+    const url = `${liveURL}?collectionName=${collectionName}&queryParams=${encodeURIComponent(queryParams)}`;
+    console.log('Constructed URL:', url); 
 
     const response = await axios.get(url);
     console.log('Data read successfully', response);
@@ -35,6 +37,18 @@ export async function readDataFromMongoWithParam(collectionName, queryParams) {
 export async function readSingleDataFromMongo(collectionName, docID) {
   try {
     const url = `${liveURL}?collectionName=${collectionName}&id=${docID}`;
+    const response = await axios.get(url);
+    console.log('Data read successfully');
+    console.log(response.data, '667777888');
+    return response.data; // Return the response data
+  } catch (error) {
+    console.error('Error updating data:', error);
+    throw error; // Rethrow the error for handling in the calling function
+  }
+}
+export async function readDataFromMongoBasedOnEmail(collectionName, email) {
+  try {
+    const url = `${liveURL}?collectionName=${collectionName}&email=${email}`;
     const response = await axios.get(url);
     console.log('Data read successfully');
     console.log(response.data, '667777888');
@@ -92,19 +106,19 @@ export async function updateDataInMongo(collectionName, id, data) {
 
 
 
-export async function addBudgetItemInDb(collectionName, data) {
-  console.log(collectionName + ' ' + " " + data);
-  try {
-     const url = `${baseUrl}/budget-item/${collectionName}`;
-    // const url = `${baseUrl}?collectionName=${collectionName}`;
-    const response = await axios.put(url, data);
-    console.log('Data created successfully');
-    return response.data; // Return the response data id
-  } catch (error) {
-    console.error('Error updating data:', error);
-    throw error; // Rethrow the error for handling in the calling function
-  }
-}
+// export async function addBudgetItemInDb(collectionName, data) {
+//   console.log(collectionName + ' ' + " " + data);
+//   try {
+//      const url = `${baseUrl}/budget-item/${collectionName}`;
+//     // const url = `${baseUrl}?collectionName=${collectionName}`;
+//     const response = await axios.put(url, data);
+//     console.log('Data created successfully');
+//     return response.data; // Return the response data id
+//   } catch (error) {
+//     console.error('Error updating data:', error);
+//     throw error; // Rethrow the error for handling in the calling function
+//   }
+// }
 
 
 
@@ -137,18 +151,18 @@ export async function addBudgetItemInDb(collectionName, data) {
 
 
 
-export async function getOverviewData(id, data) {
-  try {
-    const url = `${baseUrl}/overview/${id}`;
-    console.log('ID data fetch URL: ', url);
-    const response = await axios.get(url, data);
-    console.log('Data read successfully');
-    return response.data;
-  } catch (error) {
-    console.error('Error updating data:', error);
-    throw error;
-  }
-}
+// export async function getOverviewData(id, data) {
+//   try {
+//     const url = `${baseUrl}/overview/${id}`;
+//     console.log('ID data fetch URL: ', url);
+//     const response = await axios.get(url, data);
+//     console.log('Data read successfully');
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error updating data:', error);
+//     throw error;
+//   }
+// }
 
 
 // export async function readDataFromMongoWithParam(collectionName, queryParams) {

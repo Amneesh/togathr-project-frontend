@@ -10,6 +10,10 @@
 .overview-budget-head {
     display: flex;
     justify-content: space-between;
+
+}
+.overview-budget-head h3{
+  font-size: clamp(20px, 4vw, 25px);
 }
 
 .overview-view-more-btn {
@@ -40,6 +44,7 @@
 }
 
 .modal-box-root {
+
     display: flex;
     align-items: center;
 }
@@ -92,6 +97,10 @@
   .event-address-text {
     max-width: 250px;
     max-lines: 4;
+  }
+
+  .max-budget-indicator {
+    display: flex;
   }
 
   @media only screen and (max-width:800px){

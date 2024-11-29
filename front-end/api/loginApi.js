@@ -61,41 +61,54 @@ export async function logoutUser(data) {
     }
 }
 
-
-
-
-export const googleAuth = (code) => {
-    return api.get(`/google?code=${code}`)
-        .then(response => {
-            console.log('Google Auth Success:', response);
-            return response;
-        })
-        .catch(error => {
-            if (error.response) {
-                // The request was made, and the server responded with a status code outside the 2xx range
-                console.error('Google Auth Server Error:', error.response.data);
-            } else if (error.request) {
-                // The request was made, but no response was received
-                console.error('Google Auth No Response:', error.request);
-            } else {
-                // Something else happened while setting up the request
-                console.error('Google Auth Error:', error.message);
-            }
-            throw error;
-        });
-};
-
-export const signUser = (req, res) => {
-    return api.post(`/signup`, req)
-    .then(
-        response => {
-            console.log('response in api', response);
-            return response;
-        }
-    ).catch(error => {
-        return error;
-    })
+export async function saveTasksToDatabase(data) {
+    try {
+        const url = `${liveURL}/saveTasks`;
+        //  const url = `${baseUrl}/create-data/${collectionName}`;
+        const response = await axios.post(url, data);
+        console.log('Data created successfully');
+        return response.data; // Return the response data id
+    } catch (error) {
+        console.error('Error updating data:', error);
+        throw error; // Rethrow the error for handling in the calling function
+    }
 }
+
+
+
+
+// export const googleAuth = (code) => {
+//     return api.get(`/google?code=${code}`)
+//         .then(response => {
+//             console.log('Google Auth Success:', response);
+//             return response;
+//         })
+//         .catch(error => {
+//             if (error.response) {
+//                 // The request was made, and the server responded with a status code outside the 2xx range
+//                 console.error('Google Auth Server Error:', error.response.data);
+//             } else if (error.request) {
+//                 // The request was made, but no response was received
+//                 console.error('Google Auth No Response:', error.request);
+//             } else {
+//                 // Something else happened while setting up the request
+//                 console.error('Google Auth Error:', error.message);
+//             }
+//             throw error;
+//         });
+// };
+
+// export const signUser = (req, res) => {
+//     return api.post(`/signup`, req)
+//     .then(
+//         response => {
+//             console.log('response in api', response);
+//             return response;
+//         }
+//     ).catch(error => {
+//         return error;
+//     })
+// }
 
 // export const loginUser = (req, res) => {
 //     return api.post(`/login`, req)
@@ -135,62 +148,62 @@ export const signUser = (req, res) => {
 //     })
 // }
 
-export const googleVendorAuth = (code) => {
-    return api.get(`/vendor-google?code=${code}`)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            if (error.response) {
-                // The request was made, and the server responded with a status code outside the 2xx range
-                console.error('Google Auth Server Error:', error.response.data);
-            } else if (error.request) {
-                // The request was made, but no response was received
-                console.error('Google Auth No Response:', error.request);
-            } else {
-                // Something else happened while setting up the request
-                console.error('Google Auth Error:', error.message);
-            }
-            throw error;
-        });
-};
+// export const googleVendorAuth = (code) => {
+//     return api.get(`/vendor-google?code=${code}`)
+//         .then(response => {
+//             return response;
+//         })
+//         .catch(error => {
+//             if (error.response) {
+//                 // The request was made, and the server responded with a status code outside the 2xx range
+//                 console.error('Google Auth Server Error:', error.response.data);
+//             } else if (error.request) {
+//                 // The request was made, but no response was received
+//                 console.error('Google Auth No Response:', error.request);
+//             } else {
+//                 // Something else happened while setting up the request
+//                 console.error('Google Auth Error:', error.message);
+//             }
+//             throw error;
+//         });
+// };
 
-export const signUpVendor = (req, res) => {
-    return api.post(`/vendor-signup`, req)
-    .then(
-        response => {
-            return response;
-        }
-    ).catch(error => {
-        return error;
-    })
-}
+// export const signUpVendor = (req, res) => {
+//     return api.post(`/vendor-signup`, req)
+//     .then(
+//         response => {
+//             return response;
+//         }
+//     ).catch(error => {
+//         return error;
+//     })
+// }
 
-export const vendorLogin = (req) => {
-    return api.post(`/vendor-login`, req)
-    .then(response => {
-        return response;
-    })
-    .catch(error => {
-        if (error.response) {
-            console.error('Login Server Error:', error.response.data);
-            return error.response.data; 
-        } else {
-            console.error('Login Error:', error.message);
-            return { message: error.message }; 
-        }
-    });
-}
+// export const vendorLogin = (req) => {
+//     return api.post(`/vendor-login`, req)
+//     .then(response => {
+//         return response;
+//     })
+//     .catch(error => {
+//         if (error.response) {
+//             console.error('Login Server Error:', error.response.data);
+//             return error.response.data; 
+//         } else {
+//             console.error('Login Error:', error.message);
+//             return { message: error.message }; 
+//         }
+//     });
+// }
 
-export const vendorLogout = async(req) => {
-    return api.post(`/vendor-logout`, req)
-    .then(response => {
-        return response;
-    })
-    .catch(error => {
-        return error;
-    })
-}
+// export const vendorLogout = async(req) => {
+//     return api.post(`/vendor-logout`, req)
+//     .then(response => {
+//         return response;
+//     })
+//     .catch(error => {
+//         return error;
+//     })
+// }
 
 export const openAI = (input) => {
     return api.post(`/generate-task-list`, {input})
@@ -238,15 +251,15 @@ export const generateWorkspaceLink = (req) => {
     });
 }
 
-export const saveTasksToDatabase = (req) => {
-    return api.post(`/save-tasks-db`, req)
-    .then(response => {
-        return response
-    })
-    .catch(error => {
-        console.log('eroor', error);
-    })
-}
+// export const saveTasksToDatabase = (req) => {
+//     return api.post(`/save-tasks-db`, req)
+//     .then(response => {
+//         return response
+//     })
+//     .catch(error => {
+//         console.log('eroor', error);
+//     })
+// }
 
 export const assignTaskToCollaborator = (req) => {
     return api.post(`/assign-task`, req)
