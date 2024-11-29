@@ -11,7 +11,7 @@ const DonutChart = ({ data, labels, position }) => {
         plotOptions: {
             pie: {
                 donut: {
-                    size: '85%',
+                    size: '80%',
                     labels: {
                         show: false,
                     },
@@ -20,6 +20,9 @@ const DonutChart = ({ data, labels, position }) => {
                     enabled: false,
                 },
             },
+        },
+        stroke: {
+            width: 2 // Width of the stroke around the slices
         },
         dataLabels: {
             enabled: false, // Enable data labels

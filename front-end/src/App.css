@@ -1204,15 +1204,23 @@ guest-donut,
 
 /* Overview Tasks List CSS */
 .overview-task {
+  height: 100%;
   width: 100%;
   border: 1px solid var(--primary-gray);
   border-radius: 20px;
+
+  display: flex;
+    flex-flow: column;
+    justify-content: space-around;
 
   .overview-tasks-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+    flex-flow: row wrap;
+    margin-top: -10px;
+    padding: 0rem 1rem 0rem;
 
     .modal-button {
       background-color: var(--primary-purple);
@@ -1227,7 +1235,8 @@ guest-donut,
     font-size: clamp(20px, 4vw, 25px);
   }
   .overview-tasks-para {
-    padding: 1rem;
+    flex-basis: 100%;
+    padding: 2rem 1rem 0rem 0rem;
   }
 
   .todo-list h4{
@@ -1690,7 +1699,7 @@ margin: 0 auto;
 .guest-add-overview,
 .budget-add-overview {
   width: 100%;
-  min-height: 300px;
+  height: 400px;
   display: flex;
   flex-flow: column;
   justify-content: space-around;

@@ -257,10 +257,11 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
             closeModalAfterDataSend="true"
           />
         </div>
-      </div>
-      <div className="overview-tasks-para">
+        <div className="overview-tasks-para">
         <p>Here is a task list to get you started</p>
       </div>
+      </div>
+     
       <div className="todo-list">
         <h4>To-Do</h4>
         <div className="todo-list-items">
