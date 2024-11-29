@@ -83,12 +83,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
   }
   
   .event-content {
     display: flex;
-    flex-flow: row wrap;
-    gap: 4rem;
+    flex-flow: row;
+    gap: 3rem;
     justify-content: center;
     align-items: center;
     padding-right: 1rem;
@@ -115,8 +116,7 @@
     .event-main-body {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem
-        ;
+        gap: 1.5rem;
     }
 
     .event-content {

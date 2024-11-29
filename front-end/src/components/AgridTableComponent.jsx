@@ -15,6 +15,7 @@ import { updateDataInMongo, createDataInMongo, readSingleDataFromMongo } from '.
 import { HfInference } from '@huggingface/inference';
 import { useSnackbar } from './SnackbarContext';
 import { useScrollTrigger } from '@mui/material';
+import TogathrLoader from './TogathrLoader.jsx'
 
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -79,6 +80,7 @@ const AgridTable = (props) => {
     const [guestsConfirmed, setGuestsConfirmed] = useState([]);
 
     const [addedGuestNewInsertedId, setAddedGuestNewInsertedId] = useState('');
+    const [loader, setLoader] = useState(null);
 
     // const [dataGot, setDataGot] = useState(false); // Flag to prevent multiple calls
 
@@ -204,7 +206,7 @@ END:VCALENDAR`;
     }, [answerJson]);
 
 
-    
+
 
 
 
@@ -263,12 +265,12 @@ END:VCALENDAR`;
 
 
 
-    const inference = new HfInference("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"); 
+    const inference = new HfInference("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");
 
     const handleTextQuery = async () => {
         setLoading(true);
-        setError(null); 
-        setResponse(''); 
+        setError(null);
+        setResponse('');
 
         try {
             const stream = inference.chatCompletionStream({
@@ -277,11 +279,11 @@ END:VCALENDAR`;
                 max_tokens: 500,
             });
 
-           
+
             let fullResponse = '';
             for await (const chunk of stream) {
                 fullResponse += chunk.choices[0]?.delta?.content || "";
-                setResponse(fullResponse); 
+                setResponse(fullResponse);
                 setTemplateInputValue(fullResponse);
             }
         } catch (err) {
@@ -353,16 +355,17 @@ END:VCALENDAR`;
         // Create a FormData instance
         const formData = new FormData();
 
-        
+
 
         // // Append email, subject, and message to FormData
-        const data  = {
-            "email":JSON.stringify(email),
-            "subject":subject,
-            "message":message + ` <p>Please respond to this email by clicking one of the links below:</p>
+        const data = {
+
+            "email": JSON.stringify(email),
+            "subject": subject,
+            "message": message + ` <p>Please respond to this email by clicking one of the links below:</p>
             <p><a href="https://email-rsvp-page.vercel.app/?email=${email}&name=${nameOfGuest}">Invitation form</a></p>`,
-            "nameOfGuest":nameOfGuest,
-            "guestAllData":JSON.stringify(guestAllData),
+            "nameOfGuest": nameOfGuest,
+            "guestAllData": JSON.stringify(guestAllData),
 
         }
         // formData.append('email', JSON.stringify(email));
@@ -384,10 +387,12 @@ END:VCALENDAR`;
         //     console.warn('No files attached.');
         // }
 
+        setLoader(true);
+
         try {
             // console.log(formData);
             // const response = await axios.post(`${baseUrl}/email/sendemail`, formData, {
-                const response = await axios.post('https://togather-project-backend.vercel.app/api/email', data) 
+            const response = await axios.post('https://togather-project-backend.vercel.app/api/email', data)
 
             //     headers: {
             //         'Content-Type': 'multipart/form-data', // Important for file uploads
@@ -397,11 +402,15 @@ END:VCALENDAR`;
             if (response.data.message === 'Email sent successfully' || response.data) {
                 // setEmailSent(true);
                 handleEmailSentStatus(response.data.responses); // for front-end invite status change
-                alert('Email sent successfully');
+                setLoader(null);
+
+                showSnackbar('Email sent successfully');
             } else {
                 console.error(response.data);
+                setLoader(null);
             }
         } catch (error) {
+            setLoader(null)
             console.error('Error:', error);
             alert('An error occurred while sending the email. Please try again.');
         }
@@ -724,7 +733,11 @@ END:VCALENDAR`;
         <>
             {/* <div><ToastContainer /></div> */}
 
-
+            {
+                loader ?
+                    <TogathrLoader />
+                    : <></>
+            }
             <section className='guest-table'>
 
                 <div className="guest-table-header">
@@ -832,17 +845,17 @@ END:VCALENDAR`;
                                                     {loading ? 'Loading...' : 'Generate AI text'}
                                                 </button>
                                             </div>
-                                            
+
                                             <input type='text' value={aiTextInput} onChange={handleInputChange} placeholder="Generate AI based email here..." />
-                                            <br/>
+                                            <br />
                                             <textarea rows='10' cols='50' id='content' name='content' onChange={TemplateInputhandleChange} value={message}></textarea>
                                         </div>
 
                                         {/* <div className="form-fields">
                                             <label htmlFor='attachment'>Attachment</label> */}
-                                            {/* < input type="file"  onChange={handleAttachmentChange} /> */}
+                                        {/* < input type="file"  onChange={handleAttachmentChange} /> */}
                                         {/* </div>*/}
-                                    </form> 
+                                    </form>
 
                                 }
                                 saveDataAndOpenName="Send Invite"
