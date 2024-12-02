@@ -15,7 +15,8 @@ const SendWorkSpaceInvite = () => {
   const generateLink = () => {
     const eventId = localStorage.getItem("eventId");
     if (eventId) {
-      return `https://togathr.ca/join-workspace/${eventId}`;
+     return `https://togathr.ca/join-workspace/${eventId}`;
+    //  return `http://localhost:8080/join-workspace/${eventId}`;
     }
   };
 

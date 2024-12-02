@@ -28,8 +28,8 @@ const Collaborators = () => {
         console.log("Response from single:", response.collaborators);
         const collaboratorsList = response.collaborators;
         setAllCollaborators(collaboratorsList);
-        const colabList = collaboratorsList.filter(collaborator => collaborator !== userId);
-        setCollaborators(colabList);
+      //  const colabList = collaboratorsList.filter(collaborator => collaborator !== userId);
+        setCollaborators(collaboratorsList);
       })
       .catch((error) => {
         console.error("Failed to get data:", error);

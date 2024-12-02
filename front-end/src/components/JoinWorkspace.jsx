@@ -8,7 +8,10 @@ import {
   updateDataInMongo,
 } from "../../api/mongoRoutingFile";
 
-export const JoinWorkspace = ({ eventID }) => {
+export const JoinWorkspace = () => {
+  // console.log(eventID, 'agyi oye event id');
+  const [eventID, setEventID] = useState(localStorage.getItem('workspace-id') || []);
+
   const [message, setMessage] = useState("Joining the workspace...");
   const [collaborators, setCollaborators] = useState([]);
   const navigate = useNavigate();
@@ -17,7 +20,8 @@ export const JoinWorkspace = ({ eventID }) => {
     const userData = localStorage.getItem("user-info");
     const userDataObj = JSON.parse(userData);
     const userId = userDataObj?.email;
-
+console.log(eventID,'event agya');
+console.log(userId, 'user id agya' );
     if (eventID && userId) {
       joinWorkSpaceEvent(eventID, userId);
     } else {
@@ -26,15 +30,18 @@ export const JoinWorkspace = ({ eventID }) => {
   };
 
   const joinWorkSpaceEvent = (eventID, userId) => {
+    console.log(eventID, 'ede ch v agyi');
+    console.log(userId, 'ede ch v agyi');
     readSingleDataFromMongo("events", eventID)
       .then(async (response) => {
         console.log("Response from single:", response.collaborators);
         const collaboratorsList = response.collaborators;
         setCollaborators(collaboratorsList);
-        if (collaborators.includes(userId)) {
-          collaborators.push(userId);
+        console.log(collaboratorsList.includes(userId));
+        if (!collaboratorsList.includes(userId)) {
+          collaboratorsList.push(userId);
           const dataToUpdate = {
-            collaborators: collaborators,
+            collaborators: collaboratorsList,
           };
           updateDataInMongo("events", eventID, dataToUpdate).then(
             (response) => {
@@ -45,6 +52,7 @@ export const JoinWorkspace = ({ eventID }) => {
             }
           );
         } else {
+          setMessage("You are already in workspace, Please go to homepage!");
           console.log("User is already a collaborator");
         }
       })

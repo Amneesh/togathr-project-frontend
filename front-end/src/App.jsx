@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter,
   Route,
@@ -53,10 +53,22 @@ function App() {
     const workspaceId = pathParts[pathParts.length - 1];
     return workspaceId;
   }
-  const eventIdToJoinWorkspace = getWorkspaceId();
-
+  // const eventIdToJoinWorkspace = getWorkspaceId();
+  // useEffect(() => {
+  //   const workspaceId = getWorkspaceId();
+  //   if (workspaceId) {
+  //     localStorage.setItem("workspace-id", workspaceId);
+  //     console.log(`Stored workspace ID: ${workspaceId}`);
+  //   }
+  // }, []);
  
   const PrivateRouterWorkSpace = ({ element }) => {
+    console.log('wow man');
+    const workspaceId = getWorkspaceId();
+    if (workspaceId) {
+      localStorage.setItem("workspace-id", workspaceId);
+      console.log(`Stored workspace ID: ${workspaceId}`);
+    }
     const token = localStorage.getItem("user-info");
     return token ? element : <Navigate to="/login?workspace" />;
   };
@@ -114,7 +126,7 @@ function App() {
           />
           <Route
             path="/joinWorkspace"
-            element={<JoinWorkspace eventID={eventIdToJoinWorkspace} />}
+            element={<JoinWorkspace />}
           />
         </Routes>
       </BrowserRouter>
