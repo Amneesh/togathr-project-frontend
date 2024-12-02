@@ -15,7 +15,7 @@ import { updateDataInMongo, createDataInMongo, readSingleDataFromMongo } from '.
 import { HfInference } from '@huggingface/inference';
 import { useSnackbar } from './SnackbarContext';
 import { useScrollTrigger } from '@mui/material';
-
+import TogathrLoader from './TogathrLoader.jsx'
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const rowSelection = {
@@ -79,7 +79,7 @@ const AgridTable = (props) => {
     const [guestsConfirmed, setGuestsConfirmed] = useState([]);
 
     const [addedGuestNewInsertedId, setAddedGuestNewInsertedId] = useState('');
-
+    const [loader, setLoader] = useState(null);
     // const [dataGot, setDataGot] = useState(false); // Flag to prevent multiple calls
 
     const handleFirstNameChange = (event) => { setFormFirstName(event.target.value); }
@@ -395,6 +395,7 @@ END:VCALENDAR`;
         // } else {
         //     console.warn('No files attached.');
         // }
+        setLoader(true);
 
         try {
             // console.log(formData);
@@ -409,11 +410,14 @@ END:VCALENDAR`;
             if (response.data.message === 'Email sent successfully' || response.data) {
                 // setEmailSent(true);
                 handleEmailSentStatus(response.data.responses); // for front-end invite status change
-                alert('Email sent successfully');
+                setLoader(null);
+                showSnackbar('Email sent successfully');
             } else {
                 console.error(response.data);
+                setLoader(null);
             }
         } catch (error) {
+            setLoader(null)
             console.error('Error:', error);
             alert('An error occurred while sending the email. Please try again.');
         }
@@ -736,6 +740,11 @@ END:VCALENDAR`;
         <>
             {/* <div><ToastContainer /></div> */}
 
+            {
+                loader ?
+                    <TogathrLoader />
+                    : <></>
+            }
 
             <section className='guest-table'>
 

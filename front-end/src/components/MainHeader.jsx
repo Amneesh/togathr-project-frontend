@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import generateAITaskList from "../../api/generateTasklistAI";
+import togatherLogo from '../resources/assets/Logo/togather-logo.png'
+
 
 const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEventId, showHeaderControls }) => {
     const navigate = useNavigate();
@@ -22,7 +24,8 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
     const [guestCount, setGuestCount] = useState('');
     const [maxBudget, setMaxBudget] = useState('');
 
-    const [isMobileView, setIsMobileView] = useState(false);
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 640);
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const savedEventId = localStorage.getItem('eventId');
@@ -178,21 +181,22 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
     return (
 
         <header className="main-header-root">
-            {isMobileView ? (
+            {/* {isMobileView ? ( */}
                 <div
                     className="hamburger cursor-pointer"
                     onClick={toggleMenu}>
                     <h3 className='ham-icon'><i className="fa-solid fa-bars"></i></h3>
                 </div>
-            )
-                : ''}
+            {/* )
+                : ''} */}
 
             {isMenuOpen && (
-                <div className="full-screen-menu" >
+                <div className="full-screen-menu" data-aos="fade-right" >
                     <div className='mobile-nav-header'>
                         <a href='#' className='close-menu' onClick={toggleMenu}><i className="fa-solid fa-close"></i></a>
                         <div className='logo-section'>
-                            <img className='mobile-nav-logo' src="/src/resources/assets/Logo/togatherLogo.png" alt="togather-logo"></img>
+                        <img className='mobile-nav-logo' src={togatherLogo} alt="togather-logo"></img>
+
                         </div>
                     </div>
                     <ul>
@@ -390,7 +394,7 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
 
             {showHeaderControls ? (
                 <div className="left-section">
-                    <div>
+                    <div className='create-event-section'>
                         <Modal
 
 
@@ -493,7 +497,7 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
             <div className="right-section">
 
 
-                <div>
+                <div className='drop-image'>
                     <Dropdown>
                         <Dropdown.Toggle
                             as="span"

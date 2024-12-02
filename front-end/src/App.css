@@ -1185,11 +1185,14 @@ guest-donut,
   .right-sections {
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 
 }
 
-
+.drop-image{
+  height: 50px;
+}
 
 .container-carousel-landing {
   filter: brightness(0.5);
@@ -1205,7 +1208,7 @@ guest-donut,
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-height: 100%;
+  height: 100%;
   width: 100%;
   border: 1px solid var(--primary-gray);
   border-radius: 20px;
@@ -1671,7 +1674,7 @@ height: 100%;
 
 @media only screen and (min-width: 1620px) {
   .past-event-cards-container {
-    justify-content: flex-start;
+    justify-content: center;
   }
 }
 
@@ -3339,7 +3342,9 @@ img.image2 {
   display: flex;
   flex-flow: column;
   gap: 5rem;
-  padding: 2rem 5rem;
+  padding: 2rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .vendor-tile {
@@ -3466,6 +3471,8 @@ img.image2 {
 .togather-vendor-form-page {
   display: flex;
   flex-flow: column;
+  max-width: 1200px;
+  margin: 0 auto;
   gap: 2rem;
 }
 

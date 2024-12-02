@@ -14,6 +14,7 @@ import logo from "/src/resources/assets/Logo/whitelogo_togathr.svg";
 import generateAITaskList from "../../api/generateTasklistAI";
 import { createDataInMongo } from "../../api/mongoRoutingFile.js";
 import { useSnackbar } from "../components/SnackbarContext.jsx";
+import TogathrLoader from '../components/TogathrLoader.jsx'
 
 export const Login = () => {
   const showSnackbar = useSnackbar();
@@ -25,6 +26,7 @@ export const Login = () => {
   const queryParams = new URLSearchParams(location.search);
   const [hasWorkspace, sethasWorkspace] = useState(queryParams.has("workspace"));
   const [eventData, setEventData] = useState(null);
+  const [loader, setLoader] = useState(null);
   useEffect(() => {
     if (localStorage.getItem("eventInfo") !== null) {
       const parsedData = JSON.parse(localStorage.getItem("eventInfo"));
@@ -35,6 +37,7 @@ export const Login = () => {
 
   const responseGoogle = async (authResult) => {
     // try {
+      setLoader(true);
     if (authResult["code"]) {
 
       console.log(authResult["code"]);
@@ -45,6 +48,7 @@ export const Login = () => {
 
 
       googleLoginLive(googleData).then(response => {
+        setLoader(null);
         console.log('Response from createdData:', response);
         showSnackbar('Confirmation', response.message);
         const email = response.user.email;
@@ -57,6 +61,7 @@ export const Login = () => {
 
       })
         .catch(error => {
+          setLoader(null);
           console.error('Failed to update data:', error);
           showSnackbar('Oops!', `Try again`, '#FBECE7');
 
@@ -68,15 +73,16 @@ export const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // try {
+    setLoader(true);
     const loginData = {
       "userEmail": userEmail,
       "password": e.target.password.value,
       "collectionName": 'users'
 
     }
-    // amneesh
 
     loginUser(loginData).then(response => {
+      setLoader(null);
       console.log('Response from createdData:', response);
       showSnackbar('Confirmation', response.message);
       const email = response.user.email;
@@ -86,12 +92,12 @@ export const Login = () => {
 
     })
       .catch(error => {
+        setLoader(null);
         console.error('Failed to update data:', error);
         showSnackbar('Oops!', `Try again`, '#FBECE7');
 
       });
 
-    // amneesh
 
 
 
@@ -227,6 +233,7 @@ export const Login = () => {
   });
   return (
     <div className="login-container">
+      {loader ? <TogathrLoader /> : <></>}
       <div className="login-logo">
         <img src={logo} alt="ToGathr"></img>
         <h2>Event planning simplified.</h2>

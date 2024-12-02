@@ -58,7 +58,7 @@ const LandingPage = () => {
             title: 'Shashank Panjeti',
             description: 'UI/UX designer',
             imageUrl: teamMemberShashank,
-            linkedinURL: 'https://www.linkedin.com/in/'
+            linkedinURL: 'https://www.linkedin.com/in/shashank-panjeti'
         },
         {
             id: 3,
@@ -91,7 +91,7 @@ const LandingPage = () => {
             title: 'Amneesh Singh',
             description: 'Full Stack Developer',
             imageUrl: teamMemberAmneesh,
-            linkedinURL: 'https://www.linkedin.com/in/amneesh-pal-singh-67913a207'
+            linkedinURL: 'https://www.linkedin.com/in/amneesh-pal-singh'
         },
         {
             id: 6,
@@ -112,7 +112,7 @@ const LandingPage = () => {
             title: 'Vishnu Vardhan',
             description: 'Full Stack Developer',
             imageUrl: teamMemberVishnu,
-            linkedinURL: 'https://www.linkedin.com/in/'
+            linkedinURL: 'https://www.linkedin.com/in/vishnu-vardhan-singh'
         }
     ]
 
