@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { readSingleDataFromMongo, updateDataInMongo } from "../../api/mongoRoutingFile";
+import { readSingleDataFromMongo, updateDataInMongo, formatDate } from "../../api/mongoRoutingFile";
 import { TaskList } from './TaskList';
 import GuestListOverview from './GuestListOverview'
 import VendorMainOverview from './VendorMainOverview';
@@ -12,6 +12,7 @@ import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-au
 import VendorCategoryOverview from './VendorCategoryOverview';
 import TogathrLoader from './TogathrLoader';
 import Donut from './DonutChart';
+import TextToggle from './TextToggle';
 const Overview = ({ setActiveItem, eventId }) => {
     const [event, setEvent] = useState(null);
     const [budgetList, setBudgetList] = useState([]);
@@ -30,6 +31,7 @@ const Overview = ({ setActiveItem, eventId }) => {
     const [collaborators, setCollaborators] = useState('');
     const [guestCount, setGuestCount] = useState('');
     const [maxBudget, setMaxBudget] = useState('');
+    const [loader , setloader] = useState(null);
 
     const setupChart = (budgetItems, cost, due) => {
         // console.log(`At this point of time BudgetItems = ${budgetItems}----- Total Cost: ${cost} and Total Due: ${due}`);
@@ -72,15 +74,19 @@ const Overview = ({ setActiveItem, eventId }) => {
         setActiveItem('budget');
     }
     useEffect(() => {
+       
         if (eventId) {
             const fetchEventInfo = async () => {
+               
                 const selectedEventID = eventId;
                 if (selectedEventID) {
+                 
                     try {
+                        setloader(true);
                         readSingleDataFromMongo('events', selectedEventID).then(response => {
                             // let allBudgetItems = response['budget_items'];
                             let eventObject = response;
-
+                            
                             // Selected event data for header and edit event
                             setEvent(eventObject);
                             setBudgetList(eventObject.budgetItems);
@@ -115,14 +121,18 @@ const Overview = ({ setActiveItem, eventId }) => {
                             setupChart(eventObject.budgetItems, totalBudgetCost, totalDueAmount);
                         })
                     } catch (e) {
+                        setloader(null);
                         setError('Failed to fetch event information!');
                     } finally {
+                        setloader(null);
                         setLoading(false);
                     }
                 } else {
+                    setloader(null);
                     setLoading(false);
                 }
             }
+
             fetchEventInfo();
         }
 
@@ -142,30 +152,9 @@ const Overview = ({ setActiveItem, eventId }) => {
         }
 
         updateDataInMongo('events', eventId, updatedEvent).then((response) => {
-            // generateAndSaveTaskList(eventType, createdBy, response._id);
             setEvent(updatedEvent);
         })
     }
-
-    // const generateAndSaveTaskList = async (eventType, createdBy, eventId) => {
-
-    //     if (eventType) {
-
-    //         const request = `Make a task list for ${eventType} for the event planner, without the heading`;
-    //         const response = await openAI(request);
-    //         console.log("response in component", response);
-    //         const taskList = response.data.tasks;
-    //         // console.log("In All events", response.data);
-    //         const tasksArray = taskList.split("\n");
-    //         // setTasks(tasksArray);
-
-    //         const result = await saveTasksToDatabase({ tasksArray, createdBy, eventId });
-    //         eventId = result.data.eventId;
-    //         console.log("response", eventId);
-    //         localStorage.setItem("eventId", eventId);
-
-    //     }
-    // }
 
     const handleSelect = async (value) => {
         const results = await geocodeByAddress(value);
@@ -176,6 +165,14 @@ const Overview = ({ setActiveItem, eventId }) => {
 
     return (
         <>
+      
+       
+        {
+            loader ?  <div className="loaderSection">
+        <TogathrLoader/> 
+        </div>
+            :<></>
+        }
             {eventId != null ?
                 <div className='overview-main-section'>
 
@@ -278,8 +275,9 @@ const Overview = ({ setActiveItem, eventId }) => {
 
                             <div className="event-content">
                                 <p> <i className='fa fa-user' style={{ color: 'var(--accent-pink)' }}></i> {event ? event.guestCount : ''}</p>
-                                <p className='event-address-text'>   <i className="fa-solid fa-location-dot" style={{ color: 'var(--accent-blue)' }}></i> {event ? event.location : ''}</p>
-                                <p>  <i className="fa-solid fa-calendar" style={{ color: 'var(--accent-yellow)' }}></i> {event ? event.eventDate : ''}</p>
+                                <p className='event-address-text'>   <i className="fa-solid fa-location-dot" style={{ color: 'var(--accent-blue)' }}></i> {event ?   <TextToggle  text={event.location} maxLength={10} /> : ''}</p>
+                              
+                                <p>  <i className="fa-solid fa-calendar" style={{ color: 'var(--accent-yellow)' }}></i> {event ? formatDate(event.eventDate) : ''}</p>
                             </div>
 
                         </div>
@@ -288,59 +286,53 @@ const Overview = ({ setActiveItem, eventId }) => {
 
                     <section className='overview-feature-container'>
 
-                        <div className="overview-left-container">
-                            <TaskList TaskeventId={eventId} TaskeventType={eventType} />
-                        </div>
-
-                        <div className="overview-right-container">
-
-                            <div className="overview-top-container">
-
-                                <div className="overview-budget-widget">
-
-                                    <div className="budget-add-overview">
-
-                                        <div className='guest-add-overview-header '>
-                                            <h3>Budget</h3>
-                                            <button onClick={handleClick} className='button-purple'>View More</button>
-                                        </div>
-
-                                        <div className="overview-budget-body">
-                                            <div className='budget-numbers'>
-                                                <div className='budget-add-content'>
-                                                    <h5>Total Cost</h5>
-                                                    <h2>${totalCost}</h2>
-                                                </div>
-                                                <div className='budget-add-content'>
-                                                    <h5>Due</h5>
-                                                    <h2>${totalDue}</h2>
+                        <div className="overview-upper-container">
+                            <div className="overview-left-container">
+                                <TaskList TaskeventId={eventId} TaskeventType={eventType} />
+                            </div>
+                            <div className="overview-right-container">
+                                <div className="overview-top-container">
+                                    <div className="overview-budget-widget">
+                                        <div className="budget-add-overview">
+                                            <div className='guest-add-overview-header '>
+                                                <h3>Budget</h3>
+                                                <button onClick={handleClick} className='button-purple'>View More</button>
+                                            </div>
+                                            <div className="overview-budget-body">
+                                                <div className='budget-numbers'>
+                                                    <div className='budget-add-content'>
+                                                        <h5>Total Cost</h5>
+                                                        <h2>${totalCost}</h2>
+                                                    </div>
+                                                    <div className='budget-add-content'>
+                                                        <h5>Due</h5>
+                                                        <h2>${totalDue}</h2>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            {chartData && chartData.length > 0 ? (
+                                                <div className='abcdef'>
+                                                    <Donut
+                                                    Chart labels={chartLabels} data={chartData} position={'right'} style={{ width: '50px', height: '50px', minHeight:'151px' }} />
+                                                </div>
+                                            ) : <div className='max-budget-indicator'>
+                                                <DonutChart labels={['Your Budget']} data={event ? [event.maxBudget] : [0]} position={'right'} style={{ width: '50px', height: '50px' }} />
+                                            </div>}
                                         </div>
-
-                                        {chartData && chartData.length > 0 ? (
-                                            <div className='abcdef'>
-                                                <Donut
-                                                Chart labels={chartLabels} data={chartData} position={'right'} style={{ width: '50px', height: '50px' }} />
-                                            </div>
-                                        ) : <div className='max-budget-indicator'>
-                                            <DonutChart labels={['Your Budget']} data={event ? [event.maxBudget] : [0]} position={'right'} style={{ width: '50px', height: '50px' }} />
-                                        </div>}
-
                                     </div>
-
+                                    <div className="overview-guest-widget">
+                                        {/* <TogathrLoader/> */}
+                                        <GuestListOverview active={setActiveItem}
+                            
+                                        donutdata = {  event ? event.guestCount : ''}/>
+                                    </div>
                                 </div>
-
-                                <div className="overview-guest-widget">
-                                    {/* <TogathrLoader/> */}
-                                    <GuestListOverview active={setActiveItem}
-                                    
-                                    donutdata = {  event ? event.guestCount : ''}/>
-                                </div>
+                                {/* over here */}
+                                <div className="overview-collab-widget"><OverviewCollaborators active={setActiveItem} /></div>
 
                             </div>
-                            <div className="overview-collab-widget"><OverviewCollaborators active={setActiveItem} /></div>
                         </div>
+
 
                     </section>
                     <section className='vendor-category-overview'>
@@ -351,7 +343,7 @@ const Overview = ({ setActiveItem, eventId }) => {
                         <VendorMainOverview active={setActiveItem} />
                     </section>
                 </div>
-                : <div> Please choose any event first!</div>}
+                : <><p>Please select event.</p></>}
         </>
     );
 };

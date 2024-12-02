@@ -455,7 +455,11 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
                         </div>
                     </div>
                 </section>
-                <hr />
+               
+                {
+                    !booked ? 
+                    <>
+                    <hr />
                 <section className='vendor-detail-package'>
                     <div className="vendor-package-container">
                         <h3>App-Only Exclusive Vendor Pricing!</h3>
@@ -477,6 +481,9 @@ const VendorTogatherDetailedPage = ({ vendorData }) => {
                         </div>
                     </div>
                 </section>
+                </>
+                :<></>
+                 }
                 <hr />
                 <section className='vendor-detail-footer'>
                     <div className="vendor-detail-footer-container">

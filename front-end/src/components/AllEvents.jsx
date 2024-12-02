@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import EventCard from "./EventCard";
 import "../css/AllEvents.css";
 import Modal from "./ModalPopupBox";
-import { createDataInMongo } from "../../api/mongoRoutingFile";
-import { openAI, saveTasksToDatabase } from "../../api/loginApi";
+import { createDataInMongo , formatDate} from "../../api/mongoRoutingFile";
+import { saveTasksToDatabase } from "../../api/loginApi";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
 import generateAITaskList from "../../api/generateTasklistAI";
-
+import TogathrLoader from "./TogathrLoader";
 const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
+
+  const [loader, setloader] = useState(null);
   // const [userInfo, setUserInfo] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [eventName, setEventName] = useState("");
@@ -78,20 +80,18 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
 
     if (eventType) {
       const tasklist = await generateAITaskList(eventType);
-      console.log("In All events", tasklist);
-      const tasksArray = tasklist.split("\n");
+      const taskArray = tasklist.split("\n");
 
       const dataToSend = {
         eventId: eventId,
-        tasksArray: tasksArray,
+        taskArray: taskArray,
       };
-
-      saveTasksToDatabase("", dataToSend)
+      saveTasksToDatabase(dataToSend)
         .then((response) => {
           console.log("Response from save tasks", response);
         })
         .catch((error) => {
-          console.error("Failed to update data:", error);
+          console.error("Failed to save tasks:", error);
         });
     }
   };
@@ -114,7 +114,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
     <>
       <div>
         <div className="intro-container">
-          <h2>Plan the Perfect Event with ToGather!</h2>
+          <h2>Plan the Perfect Event with ToGathr!</h2>
           <p>
             Effortlessly bring your vision to life with ToGathr - the ultimate
             platform for organizing memorable events.Whether it's an intimate
@@ -236,16 +236,20 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
           </div>
         </div>
         <div className="up-event-container">
+
+
           {myEvents && myEvents.length > 0 ? (
             <h3 className="up-events"> Your upcoming events!</h3>
           ) : (
             <h3 className="up-events"> No upcoming events!</h3>
           )}
-
+ 
+       {myEvents && myEvents.length == 0 ? <TogathrLoader/> :<></>} 
           <div className="event-list">
             {myEvents
-              ? myEvents.map((event) => (
+              ? myEvents.map((event, index) => (
                   <EventCard
+                  index={index}
                     key={event._id}
                     event={event}
                     onClick={() => {
@@ -255,7 +259,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
                     }}
                   />
                 ))
-              : ""}
+              : <div className="event-loader"> <TogathrLoader/></div>  }
           </div>
         </div>
       </div>

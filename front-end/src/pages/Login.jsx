@@ -7,13 +7,12 @@ import {
 
   loginUser,
   getAllDataOfUser,
-  openAI,
   saveTasksToDatabase,
   googleLoginLive
 } from "../../api/loginApi.js";
-import TogathrLoader from '../components/TogathrLoader.jsx'
 import logo from "/src/resources/assets/Logo/whitelogo_togathr.svg";
-import { createDataInMongo, readDataFromMongoWithParam } from "../../api/mongoRoutingFile.js";
+import generateAITaskList from "../../api/generateTasklistAI";
+import { createDataInMongo } from "../../api/mongoRoutingFile.js";
 import { useSnackbar } from "../components/SnackbarContext.jsx";
 
 export const Login = () => {
@@ -26,8 +25,6 @@ export const Login = () => {
   const queryParams = new URLSearchParams(location.search);
   const [hasWorkspace, sethasWorkspace] = useState(queryParams.has("workspace"));
   const [eventData, setEventData] = useState(null);
-
-  const [loader, setLoader] = useState(null);
   useEffect(() => {
     if (localStorage.getItem("eventInfo") !== null) {
       const parsedData = JSON.parse(localStorage.getItem("eventInfo"));
@@ -38,7 +35,6 @@ export const Login = () => {
 
   const responseGoogle = async (authResult) => {
     // try {
-      setLoader(true);
     if (authResult["code"]) {
 
       console.log(authResult["code"]);
@@ -49,7 +45,6 @@ export const Login = () => {
 
 
       googleLoginLive(googleData).then(response => {
-        setLoader(null);
         console.log('Response from createdData:', response);
         showSnackbar('Confirmation', response.message);
         const email = response.user.email;
@@ -62,20 +57,17 @@ export const Login = () => {
 
       })
         .catch(error => {
-          setLoader(null);
-
           console.error('Failed to update data:', error);
           showSnackbar('Oops!', `Try again`, '#FBECE7');
 
         });
-
+    
     };
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // try {
-      setLoader(true);
     const loginData = {
       "userEmail": userEmail,
       "password": e.target.password.value,
@@ -85,7 +77,6 @@ export const Login = () => {
     // amneesh
 
     loginUser(loginData).then(response => {
-      setLoader(null);
       console.log('Response from createdData:', response);
       showSnackbar('Confirmation', response.message);
       const email = response.user.email;
@@ -95,8 +86,6 @@ export const Login = () => {
 
     })
       .catch(error => {
-        setLoader(null);
-
         console.error('Failed to update data:', error);
         showSnackbar('Oops!', `Try again`, '#FBECE7');
 
@@ -190,7 +179,7 @@ export const Login = () => {
             email,
             eventData.eventType
           );
-          // generateAndSaveTaskList(eventData.eventType, email, response._id);
+          generateAndSaveTaskList(eventData.eventType, response._id);
           showSnackbar(
             "Event created",
             `An Event has been created for your ${eventData.eventName}`
@@ -210,29 +199,26 @@ export const Login = () => {
     }
   };
 
-  // const generateAndSaveTaskList = async (eventType, createdBy, eventId) => {
-  //   console.log("data to pass", eventType, createdBy, eventId);
+  const generateAndSaveTaskList = async (eventType, eventId) => {
+    console.log("data to pass", eventType, eventId);
 
-  //   if (eventType) {
-  //     const request = `Make a task list for ${eventType} for the event planner, without the heading`;
-  //     const response = await openAI(request);
-  //     // console.log("response in component", response);
-  //     const taskList = response.data.tasks;
-  //     // console.log("des", response.data);
-  //     const tasksArray = taskList.split("\n");
-  //     console.log("taskarray", tasksArray);
-  //     // setTasks(tasksArray);
+    if (eventType) {
+      const tasklist = await generateAITaskList(eventType);
+      const taskArray = tasklist.split("\n");
 
-  //     const result = await saveTasksToDatabase({
-  //       tasksArray,
-  //       createdBy,
-  //       eventId,
-  //     });
-  //     eventId = result.data.eventId;
-  //     // console.log("response", eventId);
-  //     localStorage.setItem("eventId", eventId);
-  //   }
-  // };
+      const dataToSend = {
+        eventId: eventId,
+        taskArray: taskArray,
+      };
+      saveTasksToDatabase(dataToSend)
+        .then((response) => {
+          console.log("Response from save tasks", response);
+        })
+        .catch((error) => {
+          console.error("Failed to save tasks:", error);
+        });
+    }
+  };
 
   const googleLogin = useGoogleLogin({
     onSuccess: responseGoogle,
@@ -240,18 +226,7 @@ export const Login = () => {
     flow: "auth-code",
   });
   return (
-
-
     <div className="login-container">
-
-      {
-        loader ? 
-<TogathrLoader/>
-:<></>
-      }
-     
-
-
       <div className="login-logo">
         <img src={logo} alt="ToGathr"></img>
         <h2>Event planning simplified.</h2>

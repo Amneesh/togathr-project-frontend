@@ -14,6 +14,14 @@
         gap: 10px;
         flex-flow: column;
         padding: 20px;
+
+        .event-location{
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        }
     }
 
     .card-image {
@@ -24,23 +32,29 @@
     }
 
 }
+.card-image {
+  overflow: hidden;
+  img:hover {
+    transform: scale(1.1);
+    transition: 0.5s ease-in-out;
+      aspect-ratio: 2/1;
+      object-fit: cover;
+  }
+}
 
 .event-list {
     border-radius: 10px;
 
     background-color: var(--secondary-purple);
-    padding: 2.5rem;
+    padding: 4rem 1.2rem 4rem; 
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+    row-gap: 2rem;
     justify-items: center;
 }
 
-.event-card:hover {
-    transform: scale(1.02);
-    border-color: #007bff;
-    /* Change border color on hover */
-}
+
 
 @media (max-width: 1100px) {
     .event-list {

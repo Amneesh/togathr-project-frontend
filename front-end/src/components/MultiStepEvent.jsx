@@ -8,11 +8,14 @@ import budget_multi from '../resources/assets/Images/budget-multi.png';
 import guest_count_multi from '../resources/assets/Images/guest-count-multi.png';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import { useSnackbar } from './SnackbarContext';
+import ConfettiExplosion from 'react-confetti-explosion';
+
 
 const MultiStepEvent = () => {
     const showSnackbar = useSnackbar();
 
     const navigate = useNavigate();
+    const [isExploding, setIsExploding] = React.useState(false);
 
     const [welcomeModalActive, setWelcomeModalActive] = useState(true);
     const [modalClass, setModalClass] = useState('');
@@ -87,15 +90,19 @@ const MultiStepEvent = () => {
                 showSnackbar('Please fill all fields.');
 
                 return;
+            }else{
+                setIsExploding(true)
             }
         }
         if (currentStep < 3) {
             setCurrentStep(currentStep + 1);
+            
         }
         console.log(currentStep);
     };
 
     const prevStep = () => {
+       
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
         }
@@ -354,8 +361,12 @@ const MultiStepEvent = () => {
 
                         </section>
                         <section className='submit-section' id="submitSection" ref={el => sectionsRef.current[3] = el} style={{ display: currentStep === 3 ? 'flex' : 'none' }}  >
+                         {isExploding && <ConfettiExplosion />}
                             <div className="submit-container" id="submit-container">
+                           
+                            
                                 <h2>{formData.eventName}</h2>
+
                                 <div className="submit-box">
 
                                     <div className="submit-label">

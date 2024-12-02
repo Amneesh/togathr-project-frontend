@@ -404,7 +404,7 @@ hr{
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding-top: 1rem;
-    gap: 2rem;
+    gap: 1rem;
 }
 .heading-cat{
     display: flex;
@@ -419,7 +419,7 @@ hr{
 }
 .main-cat{
     border: 1px solid var(--primary-gray);
-    padding: 1rem;
+    padding: 20px;
     border-radius: 20px;
     width: 100%;
    
@@ -431,24 +431,37 @@ hr{
 .m-cat{
     background-color: #EEEEEE;
     display: flex;
-    width: 7rem;
-    height: 7rem;
+    width: 200px;
+    height: 170px;
     padding: 2rem;
+    gap: 0.5rem;
+   
     color: var(--primary-purple);
     border-radius: 20px;
    
    flex-direction: column;
    align-items: center;
-   justify-content: center;
+   justify-content: space-between;
    text-align: center;
 }
 .m-cat p{
     font-size: 15px;
+    text-transform: capitalize;
 }
 .bg-color{
+    height: 100px;
+        display: flex
+;
+        justify-content: center;
+        align-items: center;
+        width: 75px;
     background-color: white;
     padding: 10px;
     border-radius: 50%;
+}
+.bg-color:hover{
+    transform: scale(1.3);
+    transition: 0.5s ease-in-out;
 }
 
 @media only screen and (min-width: 600px){
@@ -464,9 +477,11 @@ hr{
     .m-cat{
         background-color: #EEEEEE;
         display: flex;
-        width: 8rem;
-        height: 8rem;
+        width: 200px;
+        height: 170px;
         padding: 2rem;
+        gap: 0.5rem;
+      
         color: var(--primary-purple);
         border-radius: 20px;
         
@@ -495,12 +510,14 @@ hr{
     .m-cat{
         background-color: #EEEEEE;
         display: flex;
-        width: 8rem;
-        height: 8rem;
+        width: 200px;
+        height: 170px;
         padding: 2rem;
+        gap: 0.5rem;
         color: var(--primary-purple);
         border-radius: 20px;
         /* margin: 2rem; */
+        justify-content: space-between;
        flex-direction: column;
        align-items: center;
     }

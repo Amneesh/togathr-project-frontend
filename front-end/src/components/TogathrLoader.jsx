@@ -2,10 +2,9 @@ import React from 'react'
 
 const TogathrLoader = () => {
   return (
-    <div className="loader-component">
-      <div class="togathr-loader"></div>
-    </div>
-
+  
+      <div className="togathr-loader"></div>
+   
   )
 }
 

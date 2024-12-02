@@ -19,6 +19,7 @@
 @media only screen and (min-width: 600px){
 
     .intro-container {
+      
         background-color: var(--primary-purple); /* Blue background */
         background-image: url('../resources/assets/svgImages/mask-group.png');
         background-position: right;
@@ -27,7 +28,7 @@
         color: white;
         border-radius: 10px; /* Curved edges */
         padding: 50px 18rem 50px 20px;
-        padding: 1rem;
+        padding: 2rem;
         margin-bottom: 20px;
         display: flex;
         justify-content: center;
@@ -53,14 +54,22 @@
    
 .intro-container p {
     max-width: 80%;
+   
 }
 
 .up-event-container{
-    padding:1rem 2rem;
+    padding:1rem 0rem;
     border-radius: 10px;
 
 }
 .up-events{
+    position: relative;
+    top: 25px;
+    border: 2px solid var(--secondary-purple);
+    width: 400px;
+    border-radius: 20px;
+    margin: 0 auto;
+    background: white;
     text-align: center;
     padding: 10px 0px;
 }
