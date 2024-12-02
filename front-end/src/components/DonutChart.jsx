@@ -21,6 +21,9 @@ const DonutChart = ({ data, labels, position }) => {
                 },
             },
         },
+        stroke: {
+            width: 2 // Width of the stroke around the slices
+        },
         dataLabels: {
             enabled: false, // Enable data labels
         },

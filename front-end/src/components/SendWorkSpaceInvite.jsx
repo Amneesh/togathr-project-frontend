@@ -1,89 +1,105 @@
-import React, { useState } from "react";
-import { useSnackbar } from "./SnackbarContext";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { sendEmailToInvite } from "../../api/loginApi";
+import { generateWorkspaceLink } from "../../api/loginApi";
+import { useSnackbar } from './SnackbarContext';
+// import { ReactComponent as ShareWorkspaceBg } from '../resources/assets/svgImages/email_bg.svg';
 
 const SendWorkSpaceInvite = () => {
   const showSnackbar = useSnackbar();
   const [inputValue, setInputValue] = useState("");
-  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [shareableLink, setShareableLink] = useState("");
+  const userData = localStorage.getItem("user-info");
+  const userDataObj = JSON.parse(userData);
+  const userId = userDataObj.email;
   const subject = "Join the Event Workspace";
-
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // const [eventId, seteventId] = useState(localStorage.getItem("eventId"));
+
+
   const validateEmail = (email) => emailRegex.test(email);
 
-  const generateLink = () => {
-    const eventId = localStorage.getItem("eventId");
-    if (eventId) {
-      return `https://togathr.ca/join-workspace/${eventId}`;
-    }
-  };
-
-  const handleInvite = () => {
+  const handleInvite = async () => {
     console.log("Input value:", inputValue);
+
     if (!validateEmail(inputValue)) {
-      showSnackbar("Oops!", "Please enter a valid email address.", "#FBECE7");
+      showSnackbar('Oops!',"Please enter a valid email address.", '#FBECE7');
       return;
     }
-    setEmail(inputValue);
-    const link = generateLink();
-    console.log("link", link);
-    if (link) {
-      const userData = localStorage.getItem("user-info");
-      const userDataObj = JSON.parse(userData);
-      const userName = userDataObj?.name || "Event Creator";
+  
 
-      const msg = `
-      <p>You're invited to collaborate on our event planning workspace!
-      Click the link to <a href="${link}" target="_blank" rel="noopener noreferrer">Join workspace</a>
-      </p>
-    
-       <p>Best regards, ${userName}</p>
-     `;
-
-      setMessage(msg);
-      if (msg && inputValue) {
-        sendWorkSpaceInvite(msg, inputValue);
+    try {
+      const link = await generateLink(); 
+      console.log('link', link)
+      if (!!link) {
+        const userData = localStorage.getItem("user-info");
+        const userDataObj = JSON.parse(userData);
+        const userName = userDataObj?.name || "Event Creator";
+        const msg = `Hello, You're invited to collaborate on our event planning workspace!
+        **Join us here:** ${link}
+        Best regards, 
+        ${userName}`;
+        setMessage(msg); 
+        if (message && link) {
+          sendWorkSpaceInvite(inputValue, msg);
+        }
+      } else {
+        alert("Failed to generate a shareable link.");
       }
-    } else {
-      alert("Failed to generate a shareable link.");
+    } catch (error) {
+      console.error("Error generating link or sending invite:", error);
     }
   };
 
-  const sendWorkSpaceInvite = async (msg, inputValue) => {
-    // console.log("email", email, subject, message);
-    const emailFormatData = [
-      { 'email': email || inputValue, 'first_name': "buddy", 'last_name': "" },
-    ];
-    const data = {
-      'email': JSON.stringify(email || inputValue),
-      'subject': subject,
-      'message': message || msg,
-      'nameOfGuest': "buddy",
-      'guestAllData': JSON.stringify(emailFormatData),
-      "emailType": "collaborate"
+    // useEffect(() => {
+    //   generateLink();
+    // }, []);
+
+
+
+  const generateLink = async () => {
+
+    try {
+      const eventId = localStorage.getItem("eventId");
+      if (eventId) {
+        const result = await generateWorkspaceLink({ eventId });
+        console.log('link generate hogya', result)
+        const link = result.data.shareableLink;
+        if (!link) {
+          const result = await generateWorkspaceLink({ eventId });
+          const link2 = result.data.shareableLink;
+          setShareableLink(link2); 
+          return link2; 
+        }
+        setShareableLink(link); 
+        return link; 
+      } else {
+        setShareableLink("No event has been created yet");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error generating link:", error);
+      return null;
+    }
+  };
+
+  const sendWorkSpaceInvite = async (inputValue, msg) => {
+    const email = inputValue;
+    const mesg = message || msg;
+    console.log("email", email, subject, message);
+    const dataToSend = {
+      email,
+      subject,
+      message,
     };
     try {
-      const response = await axios.post(
-        "https://togather-project-backend.vercel.app/api/email",
-        data
-      );
-      if (
-        response.data.message === "Email sent successfully" ||
-        response.data
-      ) {
-        console.log("data after", response.data);
-        showSnackbar(
-          "Invitation Sent",
-          "Email has been sent! Wait for the recipient to join the workspace."
-        );
-      } else {
-        showSnackbar("Oops!", "Error in sending email", "#FBECE7");
-      }
-
-      setInputValue("");
+      const response = await sendEmailToInvite(dataToSend);
+      console.log("response", response);
+      showSnackbar('Invitation Sent', 'Email has been sent! Wait for the recipient to join the workspace.');
+      setInputValue('');
     } catch (error) {
-      showSnackbar("Oops!", "Error in sending email", "#FBECE7");
+      showSnackbar('Oops!',"Error in sending email", '#FBECE7');
     }
   };
 
@@ -124,12 +140,13 @@ const SendWorkSpaceInvite = () => {
         <h5>Enter your collaborator's Email</h5>
         <input
           type="text"
+          
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
 
         <button onClick={handleInvite}>
-          Send Invite
+          Send Invite 
           <svg
             width="17"
             height="16"

@@ -3,12 +3,12 @@ import '../css/MainHeader.css';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import Modal from './ModalPopupBox';
 import { createDataInMongo } from '../../api/mongoRoutingFile';
-import { logoutUser, saveTasksToDatabase } from '../../api/loginApi';
+import { logoutUser, openAI, saveTasksToDatabase } from '../../api/loginApi';
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import generateAITaskList from "../../api/generateTasklistAI";
+import togatherLogo from '../resources/assets/Logo/togather-logo.png'
 
 const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEventId, showHeaderControls }) => {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
     const [guestCount, setGuestCount] = useState('');
     const [maxBudget, setMaxBudget] = useState('');
 
-    const [isMobileView, setIsMobileView] = useState(false);
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 640);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const savedEventId = localStorage.getItem('eventId');
@@ -104,26 +104,22 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
         }
     };
 
-    const generateAndSaveTaskList = async (eventType, eventId) => {
-        console.log("data to pass", eventType, eventId);
-    
+    const generateAndSaveTaskList = async (eventType, createdBy, eventId) => {
+        console.log("data to pass", eventType, createdBy, eventId)
+
         if (eventType) {
-          const tasklist = await generateAITaskList(eventType);
-          const taskArray = tasklist.split("\n");
-    
-          const dataToSend = {
-            eventId: eventId,
-            taskArray: taskArray,
-          };
-          saveTasksToDatabase(dataToSend)
-            .then((response) => {
-              console.log("Response from save tasks", response);
-            })
-            .catch((error) => {
-              console.error("Failed to save tasks:", error);
-            });
+
+            const request = `Make a task list for ${eventType} for the event planner, without the heading`;
+            const response = await openAI(request);
+            const taskList = response.data.tasks;
+            const tasksArray = taskList.split("\n");
+            console.log('taskarray', tasksArray)
+            const result = await saveTasksToDatabase({ tasksArray, createdBy, eventId });
+            eventId = result.data.eventId;
+            localStorage.setItem("eventId", eventId);
+
         }
-      };
+    }
 
     const handleSelect = async (value) => {
         const results = await geocodeByAddress(value);
@@ -178,21 +174,21 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
     return (
 
         <header className="main-header-root">
-            {isMobileView ? (
+            {/* {isMobileView ? ( */}
                 <div
                     className="hamburger cursor-pointer"
                     onClick={toggleMenu}>
                     <h3 className='ham-icon'><i className="fa-solid fa-bars"></i></h3>
                 </div>
-            )
-                : ''}
+            {/* )
+                : ''} */}
 
             {isMenuOpen && (
-                <div className="full-screen-menu" >
+                <div className="full-screen-menu" data-aos="fade-right" >
                     <div className='mobile-nav-header'>
                         <a href='#' className='close-menu' onClick={toggleMenu}><i className="fa-solid fa-close"></i></a>
                         <div className='logo-section'>
-                            <img className='mobile-nav-logo' src="/src/resources/assets/Logo/togatherLogo.png" alt="togather-logo"></img>
+                            <img className='mobile-nav-logo' src={togatherLogo} alt="togather-logo"></img>
                         </div>
                     </div>
                     <ul>
@@ -376,6 +372,7 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                             </svg>
                             Collaborators
                         </a></li>
+                        
                     </ul>
 
                     <div className='links-menu'>
@@ -386,11 +383,11 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                         </ul>
                     </div>
                 </div>
-            )}
+            )} 
 
-            {showHeaderControls ? (
+    {showHeaderControls ? (
                 <div className="left-section">
-                    <div>
+                    <div className='create-event-section'>
                         <Modal
 
 
@@ -488,12 +485,12 @@ const MainHeader = ({ onCreateEvent, setActiveItem, myEvents, setMyEvents, setEv
                 </div>
             ) : null
             }
-
+        
 
             <div className="right-section">
 
 
-                <div>
+                <div className='drop-image'>
                     <Dropdown>
                         <Dropdown.Toggle
                             as="span"

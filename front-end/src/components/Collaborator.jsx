@@ -12,15 +12,9 @@ import {
 } from "../../api/loginApi";
 import { useSnackbar } from "./SnackbarContext";
 import Dropdown from "react-bootstrap/Dropdown";
-import {
-  readSingleDataFromMongo,
-  readDataFromMongoWithParam,
-  updateDataInMongo,
-  DeleteDataInMongo,
-} from "../../api/mongoRoutingFile";
+import { Modal } from "bootstrap";
 
-const Collaborator = ({ collaborator, allCollaborators }) => {
-  console.log("get all allCollaborators", allCollaborators);
+const Collaborator = ({ collaborator }) => {
   const showSnackbar = useSnackbar();
   const [isActiveStatus, setIsActiveStatus] = useState(false);
   const [tasks, setTasks] = useState([]);
@@ -44,22 +38,11 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
   useEffect(() => {
     const getCollaboratorInfo = async () => {
       try {
-        // live backend api call
-        const queryParams = {
-          and: [
-            { "email": collaborator },
-          ]
-        };
-        const result = await readDataFromMongoWithParam(
-          "users",
-          JSON.stringify(queryParams)
-        );
-        // inbuilt backend api call
-        // const userInfo = await getCollaboratorName(collaborator);
-        setCollaboratorName(result[0].name);
-        setIsActiveStatus(result[0].isActive);
+        const userInfo = await getCollaboratorName(collaborator);
+        setCollaboratorName(userInfo.data.userName);
+        setIsActiveStatus(userInfo.data.isActiveStatus);
         const img =
-          result[0].image ||
+          userInfo.data.image ||
           "https://togather-aws-image.s3.us-east-1.amazonaws.com/test13@mail.com_profilePicture";
         setImage(img);
       } catch (error) {
@@ -100,147 +83,59 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
 
   const getTasks = async () => {
     const eventId = localStorage.getItem("eventId");
-    // live backend api call
-    allCollaborators.map(async (collaborator) => {
-      const queryParamsToPass = {
-        and: [
-          { "email": collaborator },
-        ]
-      };
-      const user = await readDataFromMongoWithParam(
-        "users",
-        JSON.stringify(queryParamsToPass)
-      )
-        .then(async (response) => {
-          console.log("Response in collaborator from users:", response);
-          return response;
-        })
-        .catch((error) => {
-          console.error("Failed to get data:", error);
-        });
-      setUsers(user[0].firstName || user[0].name);
-    })
-
-    // inbuilt backend api call
-    // const collaborators = await getCollaboratorsName({ eventId });
-    // console.log("inbuilt response", collaborators.data);
-    // setUsers(collaborators.data.uniqueNames);
-
+    const collaborators = await getCollaboratorsName({ eventId });
+    setUsers(collaborators.data.uniqueNames);
     if (collaborator) {
-      // live backend api call
-      const queryParams = {
-        and: [{ event: eventId }],
-      };
-      console.log("calling before api call", eventId);
-      const result = await readDataFromMongoWithParam(
-        "tasks",
-        JSON.stringify(queryParams)
-      );
-      if (result) {
-        console.log("Response in collaborator tasks:", result);
-        const collaboratorTaskList = result || [];
+      const response = await getTaskListBasedOnCollaborator({
+        collaborator,
+        eventId,
+      });
+      const collaboratorTaskList = response?.data?.tasks || [];
+      setTasks(collaboratorTaskList);
+      console.log("collaboratorTaskList", collaboratorTaskList);
 
-        setTasks(collaboratorTaskList);
-        console.log("collaboratorTaskList", collaboratorTaskList);
+      const unassignedTasks = [];
+      const previouslyAssignedTasks = [];
 
-        const unassignedTasks = [];
-        const previouslyAssignedTasks = [];
+      collaboratorTaskList.forEach((task) => {
+        if (task.isAssigned) {
+          previouslyAssignedTasks.push({
+            id: task._id || task.id,
+            name: task.name,
+            completed: task.completed,
+            isAssigned: task.isAssigned,
+            assignedTo: task.assignedTo || "",
+          });
+        } else {
+          unassignedTasks.push({
+            id: task._id || task.id,
+            name: task.name,
+            completed: task.completed,
+            isAssigned: task.isAssigned,
+            assignedTo: task.assignedTo,
+          });
+        }
+      });
 
-        collaboratorTaskList.forEach((task) => {
-          if (task.isAssigned) {
-            previouslyAssignedTasks.push({
+      console.log("previouslyAssignedTasks", previouslyAssignedTasks);
+      if (previouslyAssignedTasks) {
+        const previouslyCompletedTasks = [];
+        previouslyAssignedTasks.forEach((task) => {
+          if (task.completed && task.assignedTo === collaborator) {
+            previouslyCompletedTasks.push({
               id: task._id || task.id,
               name: task.name,
               completed: task.completed,
               isAssigned: task.isAssigned,
               assignedTo: task.assignedTo || "",
             });
-          } else {
-            unassignedTasks.push({
-              id: task._id || task.id,
-              name: task.name,
-              completed: task.completed,
-              isAssigned: task.isAssigned,
-              assignedTo: task.assignedTo,
-            });
           }
         });
-
-        console.log("previouslyAssignedTasks", previouslyAssignedTasks);
-        if (previouslyAssignedTasks) {
-          const previouslyCompletedTasks = [];
-          previouslyAssignedTasks.forEach((task) => {
-            if (task.completed && task.assignedTo === collaborator) {
-              previouslyCompletedTasks.push({
-                id: task._id || task.id,
-                name: task.name,
-                completed: task.completed,
-                isAssigned: task.isAssigned,
-                assignedTo: task.assignedTo || "",
-              });
-            }
-          });
-          console.log("compl", previouslyCompletedTasks);
-          setCompletedTasks(previouslyCompletedTasks);
-        }
-        setUnAssignedTasks(unassignedTasks);
-        setAssignedTasks(previouslyAssignedTasks);
-      } else {
-        console.error("Failed to get data:");
+        console.log("compl", previouslyCompletedTasks);
+        setCompletedTasks(previouslyCompletedTasks);
       }
-
-      // inbuilt backend api call
-      // const response = await getTaskListBasedOnCollaborator({
-      //   collaborator,
-      //   eventId,
-      // });
-      // const collaboratorTaskList = response?.data?.tasks || [];
-
-      // setTasks(collaboratorTaskList);
-      // console.log("collaboratorTaskList", collaboratorTaskList);
-
-      // const unassignedTasks = [];
-      // const previouslyAssignedTasks = [];
-
-      // collaboratorTaskList.forEach((task) => {
-      //   if (task.isAssigned) {
-      //     previouslyAssignedTasks.push({
-      //       id: task._id || task.id,
-      //       name: task.name,
-      //       completed: task.completed,
-      //       isAssigned: task.isAssigned,
-      //       assignedTo: task.assignedTo || "",
-      //     });
-      //   } else {
-      //     unassignedTasks.push({
-      //       id: task._id || task.id,
-      //       name: task.name,
-      //       completed: task.completed,
-      //       isAssigned: task.isAssigned,
-      //       assignedTo: task.assignedTo,
-      //     });
-      //   }
-      // });
-
-      // console.log("previouslyAssignedTasks", previouslyAssignedTasks);
-      // if (previouslyAssignedTasks) {
-      //   const previouslyCompletedTasks = [];
-      //   previouslyAssignedTasks.forEach((task) => {
-      //     if (task.completed && task.assignedTo === collaborator) {
-      //       previouslyCompletedTasks.push({
-      //         id: task._id || task.id,
-      //         name: task.name,
-      //         completed: task.completed,
-      //         isAssigned: task.isAssigned,
-      //         assignedTo: task.assignedTo || "",
-      //       });
-      //     }
-      //   });
-      //   console.log("compl", previouslyCompletedTasks);
-      //   setCompletedTasks(previouslyCompletedTasks);
-      // }
-      // setUnAssignedTasks(unassignedTasks);
-      // setAssignedTasks(previouslyAssignedTasks);
+      setUnAssignedTasks(unassignedTasks);
+      setAssignedTasks(previouslyAssignedTasks);
     }
   };
 
@@ -273,14 +168,9 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
 
   const assignTask = async (taskId, userId) => {
     const id = localStorage.getItem("eventId");
+    const result = await assignTaskToCollaborator({ taskId, userId, id });
 
-    // live api call
-    const dataToUpdate = {
-      assignedTo: userId,
-      isAssigned: true,
-    };
-    updateDataInMongo("tasks", taskId, dataToUpdate).then((response) => {
-      console.log("response from updated", response);
+    if (result.status === 200) {
       const assignedTask = tasks.find((task) => task._id === taskId);
       if (assignedTask) {
         setAssignedTasks((prevAssignedTasks) => [
@@ -297,29 +187,7 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
           prevUnassignedTasks.filter((task) => task.id !== taskId)
         );
       }
-    });
-
-    // inbuilt backend api call
-    // const result = await assignTaskToCollaborator({ taskId, userId, id });
-
-    // if (result.status === 200) {
-    //   const assignedTask = tasks.find((task) => task._id === taskId);
-    //   if (assignedTask) {
-    //     setAssignedTasks((prevAssignedTasks) => [
-    //       ...prevAssignedTasks,
-    //       { ...assignedTask, assignedTo: userId, isAssigned: true },
-    //     ]);
-    //     if (!assignedTask.completed) {
-    //       setInCompleteTasks((prevIncompleteTasks) => [
-    //         ...prevIncompleteTasks,
-    //         { ...assignedTask, assignedTo: userId, completed: false },
-    //       ]);
-    //     }
-    //     setUnAssignedTasks((prevUnassignedTasks) =>
-    //       prevUnassignedTasks.filter((task) => task.id !== taskId)
-    //     );
-    //   }
-    // }
+    }
   };
 
   const handleTaskCompletionToggle = async (taskId) => {
@@ -327,52 +195,41 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
     const taskToToggle = inCompleteTasks.find(
       (task) => task.id === taskId || task._id === taskId
     );
+    const updatedTask = await changeTaskCompletionStatus({ taskId });
 
-    console.log('incompleted', taskToToggle);
-    // live backend api call
-    const taskToUpdate = {
-      "completed": taskToToggle ? true : false
-    }
-    updateDataInMongo("tasks", taskId, taskToUpdate).then(async(response) => {
-      console.log('task toggle', response);
-      if (response) {
-        if (taskToToggle) {
-          console.log("taskToToggle", taskToToggle, taskId);
-          setInCompleteTasks((prevTasks) =>
-            prevTasks.filter((task) => task.id !== taskId || task._id !== taskId)
+    if (updatedTask.status === 200) {
+      if (taskToToggle) {
+        setInCompleteTasks((prevTasks) =>
+          prevTasks.filter((task) => task.id !== taskId)
+        );
+
+        setCompletedTasks((prevCompletedTasks) => [
+          ...prevCompletedTasks,
+          { ...taskToToggle, completed: true },
+        ]);
+      } else {
+        const completedTaskToToggle = completedTasks.find(
+          (task) => task.id === taskId
+        );
+        if (completedTaskToToggle) {
+          setCompletedTasks((prevTasks) =>
+            prevTasks.filter((task) => task.id !== taskId)
           );
-          console.log("taskToToggle after", inCompleteTasks);
-  
-          setCompletedTasks((prevCompletedTasks) => [
-            ...prevCompletedTasks,
-            { ...taskToToggle, completed: true },
+
+          setInCompleteTasks((prevInCompleteTasks) => [
+            ...prevInCompleteTasks,
+            { ...completedTaskToToggle, completed: false },
           ]);
-        } else {
-          console.log("taskToToggle", taskToToggle);
-          const completedTaskToToggle = completedTasks.find(
-            (task) => task.id === taskId || task._id === taskId
-          );
-          if (completedTaskToToggle) {
-            setCompletedTasks((prevTasks) =>
-              prevTasks.filter((task) => task.id !== taskId || task._id !== taskId)
-            );
-  
-            setInCompleteTasks((prevInCompleteTasks) => [
-              ...prevInCompleteTasks,
-              { ...completedTaskToToggle, completed: false },
-            ]);
-          }
         }
-        await getTasks(); // Call getTasks after toggling completion
       }
-    });
-
-    // const updatedTask = await changeTaskCompletionStatus({ taskId });
+      await getTasks(); // Call getTasks after toggling completion
+    }
   };
 
   const handleDelete = async (collaborator) => {
     const eventId = localStorage.getItem("eventId");
     const result = await deleteCollaborator({ collaborator, eventId });
+    console.log("result in deletion", result);
     if (result.status === 200) {
       showSnackbar(
         "Collaborator removed",
@@ -385,20 +242,17 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
   };
 
   const handleEditButton = (taskId, taskName) => {
-    setEditTask(taskName);
+    setEditTask(taskName)
     setTaskIdToEdit(taskId);
     setModalActive(true);
   };
 
   const handleUnassign = async (taskId) => {
     console.log("unassign the task", taskId);
-    // live backend api call
-    const taskToUpdate = {
-      isAssigned: false,
-      assignedTo: "",
-      completed: false,
-    };
-    updateDataInMongo("tasks", taskId, taskToUpdate).then(async (response) => {
+    const response = await unAssignTaskFromCollaborator({
+      taskId,
+    });
+    if (response.status === 200) {
       showSnackbar(
         "Task unassigned",
         "Task has been unassigned from the collaborator."
@@ -422,77 +276,28 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
         prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
       );
       await getTasks();
-    });
-
-    // inbuilt backend api call
-    // const response = await unAssignTaskFromCollaborator({
-    //   taskId,
-    // });
-    // if (response.status === 200) {
-    //   showSnackbar(
-    //     "Task unassigned",
-    //     "Task has been unassigned from the collaborator."
-    //   );
-    //   const taskToUnassign = inCompleteTasks.find(
-    //     (task) => task.id === taskId || task._id === taskId
-    //   );
-
-    //   if (taskToUnassign) {
-    //     setInCompleteTasks((prevTasks) =>
-    //       prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
-    //     );
-
-    //     setUnAssignedTasks((prevTasks) => [
-    //       ...prevTasks,
-    //       { ...taskToUnassign, isAssigned: false, assignedTo: null },
-    //     ]);
-    //   }
-
-    //   setAssignedTasks((prevTasks) =>
-    //     prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
-    //   );
-    //   await getTasks();
-    // } else {
-    //   console.log("error in unassigning task");
-    // }
+    } else {
+      console.log("error in unassigning task");
+    }
   };
 
   const handleRemove = async (taskId) => {
     console.log("remove", taskId);
+    const resultant = await deleteTask({ taskId });
+    console.log("result", resultant);
+    if (resultant.status === 200) {
+      showSnackbar(
+        "Delete Confirmation",
+        "Task has been removed from the event. You can add new tasks to the event."
+      );
 
-    // live backend api call
-    DeleteDataInMongo("tasks", taskId)
-      .then(async (response) => {
-        showSnackbar(
-          "Delete Confirmation",
-          "Task has been removed from the event. You can add new tasks to the event."
-        );
+      setInCompleteTasks((prevTasks) =>
+        prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
+      );
+      await getTasks();
 
-        setInCompleteTasks((prevTasks) =>
-          prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
-        );
-        await getTasks();
-      })
-      .catch((error) => {
-        console.error("Failed to delete data:", error);
-      });
-
-    // inbuilt backend api call
-    // const resultant = await deleteTask({ taskId });
-    // console.log("result", resultant);
-    // if (resultant.status === 200) {
-    //   showSnackbar(
-    //     "Delete Confirmation",
-    //     "Task has been removed from the event. You can add new tasks to the event."
-    //   );
-
-    //   setInCompleteTasks((prevTasks) =>
-    //     prevTasks.filter((task) => task.id !== taskId && task._id !== taskId)
-    //   );
-    //   await getTasks();
-
-    //   console.log("incompleted", inCompleteTasks);
-    // }
+      console.log("incompleted", inCompleteTasks);
+    }
   };
 
   const handleEditTask = async () => {
@@ -503,105 +308,53 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
       editTaskAssignedTo,
       collaborator
     );
+    const response = await editTaskItem({
+      taskId: taskIdToEdit,
+      taskName: editTask,
+      assignedTo: editTaskAssignedTo,
+    });
+    if (response.status === 200) {
+      showSnackbar("Task Edited", "Task has been edited successfully.");
 
-    // live backend api call
-    const taskToEdit = {
-      name: editTask,
-    };
-    updateDataInMongo("tasks", taskIdToEdit, taskToEdit).then(
-      async (response) => {
-        showSnackbar("Task Edited", "Task has been edited successfully.");
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskIdToEdit || task._id === taskIdToEdit
+            ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
+            : task
+        )
+      );
 
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task.id === taskIdToEdit || task._id === taskIdToEdit
-              ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-              : task
-          )
-        );
+      setInCompleteTasks((prevInCompleteTasks) =>
+        prevInCompleteTasks.map((task) =>
+          task.id === taskIdToEdit || task._id === taskIdToEdit
+            ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
+            : task
+        )
+      );
 
-        setInCompleteTasks((prevInCompleteTasks) =>
-          prevInCompleteTasks.map((task) =>
-            task.id === taskIdToEdit || task._id === taskIdToEdit
-              ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-              : task
-          )
-        );
+      setCompletedTasks((prevCompletedTasks) =>
+        prevCompletedTasks.map((task) =>
+          task.id === taskIdToEdit || task._id === taskIdToEdit
+            ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
+            : task
+        )
+      );
+      await getTasks();
 
-        setCompletedTasks((prevCompletedTasks) =>
-          prevCompletedTasks.map((task) =>
-            task.id === taskIdToEdit || task._id === taskIdToEdit
-              ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-              : task
-          )
-        );
-        await getTasks();
-
-        setModalActive(false);
-        setTaskIdToEdit(null);
-        setEditTask("");
-        setEditTaskAssignedTo("");
-      }
-    );
-
-    // inbuilt backend api call
-    // const response = await editTaskItem({
-    //   taskId: taskIdToEdit,
-    //   taskName: editTask,
-    //   assignedTo: editTaskAssignedTo,
-    // });
-    // if (response.status === 200) {
-    //   showSnackbar("Task Edited", "Task has been edited successfully.");
-
-    //   setTasks((prevTasks) =>
-    //     prevTasks.map((task) =>
-    //       task.id === taskIdToEdit || task._id === taskIdToEdit
-    //         ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-    //         : task
-    //     )
-    //   );
-
-    //   setInCompleteTasks((prevInCompleteTasks) =>
-    //     prevInCompleteTasks.map((task) =>
-    //       task.id === taskIdToEdit || task._id === taskIdToEdit
-    //         ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-    //         : task
-    //     )
-    //   );
-
-    //   setCompletedTasks((prevCompletedTasks) =>
-    //     prevCompletedTasks.map((task) =>
-    //       task.id === taskIdToEdit || task._id === taskIdToEdit
-    //         ? { ...task, name: editTask, assignedTo: editTaskAssignedTo }
-    //         : task
-    //     )
-    //   );
-    //   await getTasks();
-
-    //   setModalActive(false);
-    //   setTaskIdToEdit(null);
-    //   setEditTask("");
-    //   setEditTaskAssignedTo("");
-    // } else {
-    //   showSnackbar("Error", "Error in editing the task");
-    // }
+      setModalActive(false);
+      setTaskIdToEdit(null);
+      setEditTask("");
+      setEditTaskAssignedTo("");
+    } else {
+      showSnackbar("Error", "Error in editing the task");
+    }
   };
 
   return (
     <>
       <div className="custom-modal-maker">
-        <div
-          id="modal-container"
-          className={`${
-            modalActive == true
-              ? "four"
-              : modalActive == false
-              ? "fourClose"
-              : modalActive == null
-              ? ""
-              : ""
-          }`}
-        >
+        <div id="modal-container" 
+          className={`${modalActive == true ? ('four') : modalActive == false ? ( 'fourClose') :modalActive == null ? ('') : '' }`} >
           <div className="modal-background">
             <div className="modal-togather">
               <div className="modal-header">
@@ -701,7 +454,9 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
               {collaboratorName.charAt(0).toUpperCase() +
                 collaboratorName.slice(1).toLowerCase()}
             </h4>
+            <p>(Organizer)</p>
             <p>{isActiveStatus ? "Online" : "Offline"}</p>
+            
           </div>
           <div className="collaborator-delete">
             <button onClick={() => handleDelete(collaborator)}>
@@ -777,10 +532,7 @@ const Collaborator = ({ collaborator, allCollaborators }) => {
                             <Dropdown.Menu>
                               <Dropdown.Item
                                 onClick={() =>
-                                  handleEditButton(
-                                    task.id || task._id,
-                                    task.name
-                                  )
+                                  handleEditButton(task.id || task._id, task.name)
                                 }
                               >
                                 Edit

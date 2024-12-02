@@ -2,25 +2,12 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3031'
 const liveURL = 'https://togather-project-backend.vercel.app/api/allServer';
-const backendLiveURL = 'https://togather-project-backend.vercel.app/api';
+
 export async function createDataInMongo(collectionName, data) {
   console.log(collectionName + ' ' + " " + data);
   try {
      const url = `${liveURL}?collectionName=${collectionName}`;
     //  const url = `${baseUrl}/create-data/${collectionName}`;
-    const response = await axios.post(url, data);
-    console.log('Data created successfully');
-    return response.data; // Return the response data id
-  } catch (error) {
-    console.error('Error updating data:', error);
-    throw error; // Rethrow the error for handling in the calling function
-  }
-}
-
-export async function addTaskToAIList(collectionName, data) {
-  console.log(collectionName + ' ' + " " + data);
-  try {
-     const url = `${backendLiveURL}/addTaskToList`;
     const response = await axios.post(url, data);
     console.log('Data created successfully');
     return response.data; // Return the response data id
@@ -237,23 +224,3 @@ export async function readCollaboratorsEventsFromMongo(collectionName, params) {
 //     throw error; // Rethrow the error for handling in the calling function
 //   }
 // }
-
-
-// src/dateUtils.js
-
-// Utility function to format the date
-export const formatDate = (dateString) => {
-  // Append 'T00:00:00' to treat the date as local time
-  const date = new Date(dateString + 'T00:00:00');
-
-  const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-  ];
-
-  const day = date.getDate();
-  const month = monthNames[date.getMonth()]; // getMonth() returns 0-11
-  const year = date.getFullYear();
-
-  return `${day} ${month} ${year}`;
-};

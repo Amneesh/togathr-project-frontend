@@ -15,6 +15,7 @@ import { updateDataInMongo, createDataInMongo, readSingleDataFromMongo } from '.
 import { HfInference } from '@huggingface/inference';
 import { useSnackbar } from './SnackbarContext';
 import { useScrollTrigger } from '@mui/material';
+import TogathrLoader from './TogathrLoader.jsx'
 
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -79,6 +80,7 @@ const AgridTable = (props) => {
     const [guestsConfirmed, setGuestsConfirmed] = useState([]);
 
     const [addedGuestNewInsertedId, setAddedGuestNewInsertedId] = useState('');
+    const [loader, setLoader] = useState(null);
 
     // const [dataGot, setDataGot] = useState(false); // Flag to prevent multiple calls
 
@@ -302,11 +304,6 @@ END:VCALENDAR`;
 
     const handleSendGuestData = () => {
 
-        if(user_form_email == ''){
-            showSnackbar('Oops!',"Please enter a valid email address.", '#FBECE7');
-        }else{
-
-        
         const guestData = {
             first_name: user_form_firstName,
             last_name: user_form_lastName,
@@ -315,16 +312,9 @@ END:VCALENDAR`;
             phone: user_form_phone,
             status: 'uninvited'
         }
+
         setMainData([...mainData, guestData]);
 
-    }
-
-       
-        setFormFirstName('');
-        setFormLastName('');
-        setFormEmail('');
-        setFormAddress('');
-        setFormPhone('');
     }
 
 
@@ -369,12 +359,13 @@ END:VCALENDAR`;
 
         // // Append email, subject, and message to FormData
         const data = {
+
             "email": JSON.stringify(email),
             "subject": subject,
-            "message": message + ` <p>Please respond to this email by clicking one of the links below:</p>`,
+            "message": message + ` <p>Please respond to this email by clicking one of the links below:</p>
+            <p><a href="https://email-rsvp-page.vercel.app/?email=${email}&name=${nameOfGuest}">Invitation form</a></p>`,
             "nameOfGuest": nameOfGuest,
             "guestAllData": JSON.stringify(guestAllData),
-            "emailType":"guest"
 
         }
         // formData.append('email', JSON.stringify(email));
@@ -396,6 +387,8 @@ END:VCALENDAR`;
         //     console.warn('No files attached.');
         // }
 
+        setLoader(true);
+
         try {
             // console.log(formData);
             // const response = await axios.post(`${baseUrl}/email/sendemail`, formData, {
@@ -409,11 +402,15 @@ END:VCALENDAR`;
             if (response.data.message === 'Email sent successfully' || response.data) {
                 // setEmailSent(true);
                 handleEmailSentStatus(response.data.responses); // for front-end invite status change
-                alert('Email sent successfully');
+                setLoader(null);
+
+                showSnackbar('Email sent successfully');
             } else {
                 console.error(response.data);
+                setLoader(null);
             }
         } catch (error) {
+            setLoader(null)
             console.error('Error:', error);
             alert('An error occurred while sending the email. Please try again.');
         }
@@ -736,7 +733,11 @@ END:VCALENDAR`;
         <>
             {/* <div><ToastContainer /></div> */}
 
-
+            {
+                loader ?
+                    <TogathrLoader />
+                    : <></>
+            }
             <section className='guest-table'>
 
                 <div className="guest-table-header">

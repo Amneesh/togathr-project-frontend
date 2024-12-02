@@ -203,9 +203,6 @@ const MainGuestManagement = () => {
         setnewFlow(true);
         setShowSheet(true);
         setJsonData([]);
-        setGuestListName('');
-        setSheetName(''); 
-
     }
 
     const [file, setFile] = useState(null);
@@ -233,7 +230,6 @@ const MainGuestManagement = () => {
             guestList: jsonData,
             name: guestListName
         }
-        setGuestListName('');
 
         console.log(data);
         // <AgGridTable json={json} />
@@ -825,7 +821,7 @@ const MainGuestManagement = () => {
                                                 rowData={guestsConfirmedPass.filter(item => item.status === "accepted")}
                                                 columnDefs={columnDefs}
                                                 // rowSelection={rowSelection}
-                                                pagination={false}
+                                                pagination={true}
                                                 paginationPageSize={10}
                                                 paginationPageSizeSelector={[10, 25, 50]}
 

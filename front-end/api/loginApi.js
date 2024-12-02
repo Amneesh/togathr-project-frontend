@@ -324,16 +324,16 @@ export const addCollaborator = (req) => {
     })
 }
 
-// export const sendEmailToInvite = async(dataToSend) => {
-//     console.log('dataToSend', dataToSend);
-//     return await api.post(`/send-email-invite`, {dataToSend})
-//     .then(response => {
-//         return response
-//     })
-//     .catch(error => {
-//         console.log('eroor', error);
-//     })
-// }
+export const sendEmailToInvite = async(dataToSend) => {
+    console.log('dataToSend', dataToSend);
+    return await api.post(`/send-email-invite`, {dataToSend})
+    .then(response => {
+        return response
+    })
+    .catch(error => {
+        console.log('eroor', error);
+    })
+}
 
 export const getTaskListBasedOnCollaborator = async({collaborator, eventId}) => {
     return await api.post(`/get-task-list`, {collaborator, eventId})
