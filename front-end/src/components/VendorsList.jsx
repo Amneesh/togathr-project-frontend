@@ -86,7 +86,7 @@ const VendorsList = ({ getVendorType, currentLocation }) => {
     const location = `${coordinates.lat},${coordinates.lng}`;
     console.log(location, vendorType, radius);
 
-    const url = `http://localhost:3031/api/places/${location}/${vendorType}?radius=${radius}`;
+    const url = `https://togather-project-backend.vercel.app/api/googlePlaces?location=${location}&type=${vendorType}&radius=${radius}`;
 
     try {
       const response = await fetch(url);
