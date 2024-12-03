@@ -20,8 +20,6 @@ export const JoinWorkspace = () => {
     const userData = localStorage.getItem("user-info");
     const userDataObj = JSON.parse(userData);
     const userId = userDataObj?.email;
-console.log(eventID,'event agya');
-console.log(userId, 'user id agya' );
     if (eventID && userId) {
       joinWorkSpaceEvent(eventID, userId);
     } else {
@@ -30,8 +28,6 @@ console.log(userId, 'user id agya' );
   };
 
   const joinWorkSpaceEvent = (eventID, userId) => {
-    console.log(eventID, 'ede ch v agyi');
-    console.log(userId, 'ede ch v agyi');
     readSingleDataFromMongo("events", eventID)
       .then(async (response) => {
         console.log("Response from single:", response.collaborators);

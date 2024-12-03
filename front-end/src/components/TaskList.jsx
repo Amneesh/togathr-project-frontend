@@ -31,7 +31,9 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
   const [tasks, setTasks] = useState([]);
   const [assignedTasks, setAssignedTasks] = useState({});
   const [users, setUsers] = useState([]);
-
+  const [myTasks, setMyTasks] = useState([]);
+  const [unAssignedTasks, setUnAssignedTasks] = useState([]);
+ 
   const [eventId, setEventId] = useState(localStorage.getItem("eventId"));
   const [inCompletedTasks, setInCompletedTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
@@ -39,6 +41,7 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
   const userData = localStorage.getItem("user-info");
   const userDataObj = JSON.parse(userData);
   const userId = userDataObj.email;
+
 
   // useEffect(() => {}, [tasks]);
   useEffect(() => {
@@ -117,6 +120,7 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
             return {
               id: task._id,
               name: task.name,
+              isAssigned: task.isAssigned,
               assignedTo: task.assignedTo || "",
               assignedToName: assignedToName || "",
               isCompleted: task.completed || false,
@@ -186,7 +190,16 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
   const getIncompleteAndCompleteTasks = (taskArray) => {
     const incompleteTasks = [];
     const completeTasks = [];
+    const myallTasks = [];
+    const unassignedAllTasks = [];
     taskArray.forEach((task) => {
+      console.log('myTasks Details', task, userId)
+      if (task.assignedTo === userId) {
+        myallTasks.push(task);
+      }
+      if (!task.isAssigned) {
+        unassignedAllTasks.push(task);
+      }
       if (task.isCompleted) {
         completeTasks.push(task);
       } else {
@@ -195,6 +208,8 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
     });
     setInCompletedTasks(incompleteTasks);
     setCompletedTasks(completeTasks);
+    setUnAssignedTasks(unassignedAllTasks);
+    setMyTasks(myallTasks);
   };
 
   const handleTaskCompletionToggle = async (taskId) => {
@@ -234,43 +249,11 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
             ]);
           }
         }
+        showSnackbar("Confirmation", 'Task status has been updated');
         displayAITaskList();
       }
       
     });
-
-
-
-    // inbuilt backend api call
-    // const updatedTask = await changeTaskCompletionStatus({ taskId });
-
-    if (updatedTask.status === 200) {
-      if (taskToToggle) {
-        setInCompletedTasks((prevTasks) =>
-          prevTasks.filter((task) => task.id !== taskId)
-        );
-
-        setCompletedTasks((prevCompletedTasks) => [
-          ...prevCompletedTasks,
-          { ...taskToToggle, completed: true },
-        ]);
-      } else {
-        const completedTaskToToggle = completedTasks.find(
-          (task) => task.id === taskId
-        );
-        if (completedTaskToToggle) {
-          setCompletedTasks((prevTasks) =>
-            prevTasks.filter((task) => task.id !== taskId)
-          );
-
-          setInCompletedTasks((prevInCompleteTasks) => [
-            ...prevInCompleteTasks,
-            { ...completedTaskToToggle, completed: false },
-          ]);
-        }
-      }
-      displayAITaskList();
-    }
   };
 
   const handleUserSelect = (taskId, userName) => {
@@ -354,12 +337,6 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
           newTaskAssignedTo
         }
         console.log('taskToAdd', taskToAdd);
-        // inbuilt backend api call
-        await addTaskToList({
-          eventId,
-          newTask,
-          newTaskAssignedTo,
-        });
         // const result = await addTaskToAIList(taskToAdd);
         // addTaskToAIList(taskToAdd)
         //   .then((response) => {
@@ -369,8 +346,7 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
         //     console.error("Failed to update data:", error);
         //     showSnackbar("Oops!", `Try again`, "#FBECE7");
         //   });
-        // await generateTaskList();
-        displayAITaskList();
+        // displayAITaskList();
       } catch (error) {
         console.error("Error adding task to list:", error);
       }
@@ -383,7 +359,45 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
     <div className="overview-task">
       <div className="overview-tasks-header">
         <h2>Tasks</h2>
-        
+
+        <Modal
+          className="all-tasks"
+          buttonId="allTasks"
+          buttonLabel="All Tasks"
+          modalHeaderTitle="All AI generated Tasks"
+          // modalBodyHeader=""
+          modalBodyContent={tasks && tasks.length > 0 ? (
+            tasks.map((task, index) => (
+              <div key={index} className="all-tasks-list-item">
+                <svg
+                  width="24"
+                  height="24"
+                  margin="1px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ marginRight: "8px" }}
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"
+                    fill="#04ED98"
+                  />
+                </svg>
+                <div className="todo-task-name-container">
+                  <div className="todo-task-name">
+                    <p>{task.name ? task.name : "Task"}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-task-box">AI generated tasks appear here</div>
+          )}
+          onModalClose={() => console.log("Modal 1 closed")}
+          closeModalAfterDataSend="true"
+        />
         <div>
           <Modal
             className="add-task"
@@ -440,14 +454,13 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
         </div>
 
         <div className="overview-tasks-para">
-        <p>Here is a AI task list to get you started</p>
+          <p>Here is a AI task list to get you started</p>
+        </div>
       </div>
-      </div>
-     
-      <div className="todo-list">
+      {/* <div className="todo-list">
         <h4>To-Do</h4>
         <div className="todo-list-items" >
-          {inCompletedTasks && inCompletedTasks.length > 0 ? (
+        {inCompletedTasks && inCompletedTasks.length > 0 ? (
             inCompletedTasks.map((task, index) => (
               <div key={index} className="todo-list-item" >
                 <input
@@ -524,6 +537,81 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
             ))
           ) : (
             <div className="no-task-box">Completed tasks appear here</div>
+          )}
+        </div>
+      </div> */}
+      <div className="todo-list">
+        <h4>Unassigned Tasks</h4>
+        <div className="todo-list-items">
+          {unAssignedTasks && unAssignedTasks.length > 0 ? (
+            unAssignedTasks.map((task, index) => (
+              <div key={index} className="todo-list-item">
+                <input
+                  type="checkbox"
+                  checked={task.isCompleted}
+                  onChange={() => handleTaskCompletionToggle(task.id)}
+                />
+                <div className="todo-task-name-container">
+                  <div className="todo-task-name">
+                    <p>{task.name ? task.name : "Task"}</p>
+                  </div>
+                  <div className="todo-task-assigned">
+                    <select
+                      value={assignedTasks[task.id] || ""}
+                      onChange={(e) =>
+                        handleUserSelect(task.id, e.target.value)
+                      }
+                    >
+                      <option value="" disabled>
+                        Assign to
+                      </option>
+                      {users.map((user, index) => (
+                        <option key={index} value={user}>
+                          {user.charAt(0).toUpperCase() +
+                            user.slice(1).toLowerCase()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-task-box">Completed tasks appear here</div>
+          )}
+        </div>
+      </div>
+      <div className="todo-list">
+        <h4>My Tasks</h4>
+        <div className="todo-list-items">
+          {myTasks && myTasks.length > 0 ? (
+            myTasks.map((task, index) => (
+              <div key={index} className="todo-list-item">
+                <svg
+                  width="24"
+                  height="24"
+                  margin="1px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ marginRight: "8px" }}
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"
+                    fill="#04ED98"
+                  />
+                </svg>
+                <div className="todo-task-name-container">
+                  <div className="todo-task-name">
+                    <p>{task.name ? task.name : "Task"}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-task-box">Tasks assigned to you appear here</div>
           )}
         </div>
       </div>
