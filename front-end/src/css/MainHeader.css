@@ -156,7 +156,7 @@
     display: grid;
     grid-template-columns: 1fr;
     z-index: 9999;
-    padding: 1rem 2rem;
+    padding: 0rem 2rem 1rem 1rem;
 }
 
 .full-screen-menu ul {
@@ -175,7 +175,7 @@
     align-items: center;
     gap: 1.2rem;
     font-family: "Noto Sans", 'Meta Pro', sans-serif;
-    font-size: 22px;
+
 }
 .create-event-section{
     display: none;
@@ -233,7 +233,7 @@
 
 .mobile-nav-logo {
     height: 4rem;
-    padding: 1rem;
+    padding: 1rem 1rem 1rem 2rem;
     /* height: 3rem; */
     max-width: 200px;
     width: auto;

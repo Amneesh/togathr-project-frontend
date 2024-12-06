@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import EventCard from "./EventCard";
 import "../css/AllEvents.css";
 import Modal from "./ModalPopupBox";
-import { createDataInMongo , formatDate} from "../../api/mongoRoutingFile";
+import UnsplashImages from './UnsplashImages';
+import TextToggle from './TextToggle';
+
+import { createDataInMongo, formatDate, DeleteDataInMongo } from "../../api/mongoRoutingFile";
 import { saveTasksToDatabase } from "../../api/loginApi";
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -10,6 +12,9 @@ import PlacesAutocomplete, {
 } from "react-places-autocomplete";
 import generateAITaskList from "../../api/generateTasklistAI";
 import TogathrLoader from "./TogathrLoader";
+
+import { useSnackbar } from './SnackbarContext';
+
 const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
 
   const [loader, setloader] = useState(null);
@@ -22,6 +27,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
   const [collaborators, setCollaborators] = useState("");
   const [guestCount, setGuestCount] = useState("");
   const [maxBudget, setMaxBudget] = useState("");
+  const showSnackbar = useSnackbar();
 
   useEffect(() => {
     const data = localStorage.getItem("user-info");
@@ -109,6 +115,21 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
     setLocation(value);
     setCoordinates(ll);
   };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+
+    DeleteDataInMongo('events', id).then(response => {
+        console.log('Response from updateData:', response);
+        // toast('Deleted Successfully')
+        showSnackbar('Deleted Successfully', 'Event has been deleted successfully.');
+        // chooseExisting();
+        setMyEvents((prevEvents) => prevEvents.filter(event => event._id !== id));
+    })
+        .catch(error => {
+            console.error('Failed to update data:', error);
+        });
+}
 
   return (
     <>
@@ -243,23 +264,33 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
           ) : (
             <h3 className="up-events"> No upcoming events!</h3>
           )}
- 
-       {myEvents && myEvents.length == 0 ? <TogathrLoader/> :<></>} 
+
+          {myEvents && myEvents.length == 0 ? <TogathrLoader /> : <></>}
           <div className="event-list">
             {myEvents
               ? myEvents.map((event, index) => (
-                  <EventCard
-                  index={index}
-                    key={event._id}
-                    event={event}
-                    onClick={() => {
-                      setEventId(event._id);
-                      setActiveItem("overview");
-                      localStorage.setItem("eventId", event._id);
-                    }}
-                  />
-                ))
-              : <div className="event-loader"> <TogathrLoader/></div>  }
+
+                <div className="event-card" >
+              
+                    <button className="delete-button" onClick={() => handleDelete(event._id)}><i className="fa-solid fa-trash-can"></i> </button>
+
+                <div className="card-image"  onClick={() => {
+                    setEventId(event._id);
+                    setActiveItem("overview");
+                    localStorage.setItem("eventId", event._id);
+                  }}>
+                    <UnsplashImages query={event.eventType} numberOfImages={'1'} randomPage={'2'} />
+                </div>
+    
+                <div className="event-card-content">
+                    <h4>{event.eventName}</h4>
+                    <p><i className="fa-regular fa-calendar"></i> {formatDate(event.eventDate)}</p>
+                    <div className='event-location'><i className="fa-solid fa-location-dot"></i>  <TextToggle text={event.location} maxLength={10} /> </div>
+                </div>
+            </div>
+            
+              ))
+              : <div className="event-loader"> <TogathrLoader /></div>}
           </div>
         </div>
       </div>

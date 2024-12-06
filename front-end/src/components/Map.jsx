@@ -12,13 +12,10 @@ export const Map = ({ vendors }) => {
         lng: -122.8490125
     };
 
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: "AIzaSyBP_kVHT7Zcd117_K3IYr5BNHaRH5htk6E"
-    });
-
+   
     const [map, setMap] = useState(null);
     const [initialLoad, setInitialLoad] = useState(true);
+ 
 
     const onLoad = useCallback((map) => {
         const bounds = new window.google.maps.LatLngBounds(center);
@@ -48,11 +45,11 @@ export const Map = ({ vendors }) => {
 
     return (
         <div style={{ position: 'relative' }}>
-            {isLoaded ? (
+          
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={12}  // Set initial zoom level
+                    zoom={2}  // Set initial zoom level
                     onLoad={onLoad}
                     onUnmount={onUnmount}
                 >
@@ -66,7 +63,7 @@ export const Map = ({ vendors }) => {
                         />
                     ))}
                 </GoogleMap>
-            ) : <></>}
+
         </div>
     );
 };
