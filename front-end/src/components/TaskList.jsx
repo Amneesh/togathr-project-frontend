@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-import {
-  getCollaboratorsName,
-  getTasksBasedOnIdFromDB,
-  getCollaboratorName,
-  addTaskToList,
-  changeTaskCompletionStatus,
-} from "../../api/loginApi";
+// import {
+//   getCollaboratorsName,
+//   getTasksBasedOnIdFromDB,
+//   getCollaboratorName,
+//   addTaskToList,
+//   changeTaskCompletionStatus,
+// } from "../../api/loginApi";
 import { useState } from "react";
-import {
-  saveTasksToDatabase,
-  assignTaskToCollaborator,
-} from "../../api/loginApi";
+// import {
+//   saveTasksToDatabase,
+//   assignTaskToCollaborator,
+// } from "../../api/loginApi";
 import Modal from "./ModalPopupBox";
 import { useSnackbar } from "./SnackbarContext";
 import {
@@ -188,8 +188,8 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
   };
 
   const getIncompleteAndCompleteTasks = (taskArray) => {
-    const incompleteTasks = [];
-    const completeTasks = [];
+    // const incompleteTasks = [];
+    // const completeTasks = [];
     const myallTasks = [];
     const unassignedAllTasks = [];
     taskArray.forEach((task) => {
@@ -200,61 +200,61 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
       if (!task.isAssigned) {
         unassignedAllTasks.push(task);
       }
-      if (task.isCompleted) {
-        completeTasks.push(task);
-      } else {
-        incompleteTasks.push(task);
-      }
+      // if (task.isCompleted) {
+      //   completeTasks.push(task);
+      // } else {
+      //   incompleteTasks.push(task);
+      // }
     });
-    setInCompletedTasks(incompleteTasks);
-    setCompletedTasks(completeTasks);
+    // setInCompletedTasks(incompleteTasks);
+    // setCompletedTasks(completeTasks);
     setUnAssignedTasks(unassignedAllTasks);
     setMyTasks(myallTasks);
   };
 
-  const handleTaskCompletionToggle = async (taskId) => {
-    console.log("change checked", tasks, taskId);
-    const taskToToggle = inCompletedTasks.find(
-      (task) => task.id === taskId || task._id === taskId
-    );
+  // const handleTaskCompletionToggle = async (taskId) => {
+  //   console.log("change checked", tasks, taskId);
+  //   const taskToToggle = inCompletedTasks.find(
+  //     (task) => task.id === taskId || task._id === taskId
+  //   );
 
-    // live backend api call
-    const taskToUpdate = {
-      "completed": taskToToggle ? true : false
-    }
-    updateDataInMongo("tasks", taskId, taskToUpdate).then(async(response) => {
-      console.log('task toggle', response);
-      if (response) {
-        if (taskToToggle) {
-          setInCompletedTasks((prevTasks) =>
-            prevTasks.filter((task) => task.id !== taskId)
-          );
+  //   // live backend api call
+  //   const taskToUpdate = {
+  //     "completed": taskToToggle ? true : false
+  //   }
+  //   updateDataInMongo("tasks", taskId, taskToUpdate).then(async(response) => {
+  //     console.log('task toggle', response);
+  //     if (response) {
+  //       if (taskToToggle) {
+  //         setInCompletedTasks((prevTasks) =>
+  //           prevTasks.filter((task) => task.id !== taskId)
+  //         );
   
-          setCompletedTasks((prevCompletedTasks) => [
-            ...prevCompletedTasks,
-            { ...taskToToggle, completed: true },
-          ]);
-        } else {
-          const completedTaskToToggle = completedTasks.find(
-            (task) => task.id === taskId
-          );
-          if (completedTaskToToggle) {
-            setCompletedTasks((prevTasks) =>
-              prevTasks.filter((task) => task.id !== taskId)
-            );
+  //         setCompletedTasks((prevCompletedTasks) => [
+  //           ...prevCompletedTasks,
+  //           { ...taskToToggle, completed: true },
+  //         ]);
+  //       } else {
+  //         const completedTaskToToggle = completedTasks.find(
+  //           (task) => task.id === taskId
+  //         );
+  //         if (completedTaskToToggle) {
+  //           setCompletedTasks((prevTasks) =>
+  //             prevTasks.filter((task) => task.id !== taskId)
+  //           );
   
-            setInCompletedTasks((prevInCompleteTasks) => [
-              ...prevInCompleteTasks,
-              { ...completedTaskToToggle, completed: false },
-            ]);
-          }
-        }
-        showSnackbar("Confirmation", 'Task status has been updated');
-        displayAITaskList();
-      }
+  //           setInCompletedTasks((prevInCompleteTasks) => [
+  //             ...prevInCompleteTasks,
+  //             { ...completedTaskToToggle, completed: false },
+  //           ]);
+  //         }
+  //       }
+  //       showSnackbar("Confirmation", 'Task status has been updated');
+  //       displayAITaskList();
+  //     }
       
-    });
-  };
+  //   });
+  // };
 
   const handleUserSelect = (taskId, userName) => {
     // console.log('Assigning task', task, 'to user', userName);
@@ -284,7 +284,27 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
       assignedTo: userEmail,
       isAssigned: true,
     };
-    updateDataInMongo("tasks", taskId, dataToUpdate).then((response) => {
+    updateDataInMongo("tasks", taskId, dataToUpdate).then(
+      (response) => {
+      displayAITaskList();
+
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId
+            ? { ...task, assignedTo: userEmail, assignedToName: userId }
+            : task
+        )
+      );
+
+      setMyTasks((prevTasks) =>
+        prevTasks.some((task) => task.id === taskId)
+          ? prevTasks
+          : [
+              ...prevTasks,
+              { id: taskId, assignedTo: userEmail, assignedToName: userId },
+            ]
+      );
+
       showSnackbar("Confirmation", `Task is assigned to ${userId}`);
     });
     // const result = await assignTaskToCollaborator({ taskId, userId, id });
@@ -546,11 +566,11 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
           {unAssignedTasks && unAssignedTasks.length > 0 ? (
             unAssignedTasks.map((task, index) => (
               <div key={index} className="todo-list-item">
-                <input
+                {/* <input
                   type="checkbox"
                   checked={task.isCompleted}
                   onChange={() => handleTaskCompletionToggle(task.id)}
-                />
+                /> */}
                 <div className="todo-task-name-container">
                   <div className="todo-task-name">
                     <p>{task.name ? task.name : "Task"}</p>
