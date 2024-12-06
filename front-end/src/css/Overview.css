@@ -60,7 +60,7 @@
   width: 100%;
   display: flex;
   flex-flow: column wrap;
-  padding: 2rem;
+  padding: 2rem 1.5rem; 
   border-radius: 1.2rem;
   gap: 2rem;
   flex-grow: 1;
@@ -94,7 +94,7 @@
   column-gap: 3rem;
 
   h1 {
-    text-transform: uppercase;
+    text-transform: capitalize;
     word-spacing: 10px;
   }
 }

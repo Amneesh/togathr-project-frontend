@@ -433,6 +433,7 @@ hr {
 
 .heading-cat h3 {
     font-size: clamp(20px, 4vw, 25px);
+    padding-left:0.5rem;
 }
 
 .m-cat {
@@ -478,7 +479,7 @@ hr {
     .flex-cat {
         display: flex;
         flex-flow: row wrap;
-        padding: 1rem;
+        padding: 1rem 0;
         justify-content: space-evenly;
         align-items: center;
     }
@@ -584,4 +585,6 @@ button#simple-tab-2 {
 
 .flex-icon {
     display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }

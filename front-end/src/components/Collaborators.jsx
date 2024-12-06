@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  getCollaboratorsName,
-  getCollaboratorsData
-} from "../../api/loginApi";
 import SendWorkSpaceInvite from './SendWorkSpaceInvite';
 import Collaborator from './Collaborator';
 import { readSingleDataFromMongo } from "../../api/mongoRoutingFile";
@@ -28,18 +24,12 @@ const Collaborators = () => {
         console.log("Response from single:", response.collaborators);
         const collaboratorsList = response.collaborators;
         setAllCollaborators(collaboratorsList);
-      //  const colabList = collaboratorsList.filter(collaborator => collaborator !== userId);
+        // const colabList = collaboratorsList.filter(collaborator => collaborator !== userId);
         setCollaborators(collaboratorsList);
       })
       .catch((error) => {
         console.error("Failed to get data:", error);
       });
-      // const result = await getCollaboratorsData({ id });
-      // // console.log("res collab in front end", result);
-      // const collaboratorsList = result.data.collaborators;
-      // // console.log("collaboratorsData", collaboratorsList);
-      // const colabList = collaboratorsList.filter(collaborator => collaborator !== userId);
-      // setCollaborators(colabList);
     } else {
       console.log("No event has been created yet");
     }
