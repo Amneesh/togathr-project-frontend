@@ -35,7 +35,10 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
     setUserInfo(userData);
   }, []);
   const addNewEventToMyEvents = (newEvent) => {
-    setMyEvents((myEvents) => [...myEvents, newEvent]);
+    if(myEvents.length > 0){
+      setMyEvents((myEvents) => [...myEvents, newEvent]);
+    }
+   
   };
   const createEvent = async (e) => {
     // e.preventDefault();
@@ -63,6 +66,9 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
         const updatedEventData = { ...eventData, _id: response._id };
         generateAndSaveTaskList(eventType, response._id);
         alert("Event successfully created!");
+        showSnackbar('Event successfully created.');
+
+        snack
         setActiveItem("overview");
         addNewEventToMyEvents(updatedEventData);
       });
@@ -125,6 +131,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
         showSnackbar('Deleted Successfully', 'Event has been deleted successfully.');
         // chooseExisting();
         setMyEvents((prevEvents) => prevEvents.filter(event => event._id !== id));
+        localStorage.removeItem('eventId');
     })
         .catch(error => {
             console.error('Failed to update data:', error);
@@ -265,8 +272,9 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
             <h3 className="up-events"> No upcoming events!</h3>
           )}
 
-          {myEvents && myEvents.length == 0 ? <TogathrLoader /> : <></>}
+         
           <div className="event-list">
+          {myEvents && myEvents.length == 0 ? <h4 className="no-events">No Events</h4> : <></>}
             {myEvents
               ? myEvents.map((event, index) => (
 
@@ -279,7 +287,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
                     setActiveItem("overview");
                     localStorage.setItem("eventId", event._id);
                   }}>
-                    <UnsplashImages query={event.eventType} numberOfImages={'1'} randomPage={'2'} />
+                    <UnsplashImages query={event.eventType} numberOfImages={'1'} randomPage={'1'} />
                 </div>
     
                 <div className="event-card-content">
@@ -290,7 +298,7 @@ const AllEvents = ({ setEventId, myEvents, setMyEvents, setActiveItem }) => {
             </div>
             
               ))
-              : <div className="event-loader"> <TogathrLoader /></div>}
+              : <div className="no-events"> <h3>No events</h3></div>}
           </div>
         </div>
       </div>

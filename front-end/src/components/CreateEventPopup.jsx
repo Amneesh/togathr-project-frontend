@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../css/createEvent.css';
 import { createDataInMongo } from '../../api/mongoRoutingFile';
 import { openAI, saveTasksToDatabase } from '../../api/loginApi';
+import { useSnackbar } from './SnackbarContext';
 
 const Popup = ({ isOpen, onClose, setActiveItem, setEventId, myEvents, setMyEvents }) => {
     const [userInfo, setUserInfo] = useState(null);
@@ -12,6 +13,7 @@ const Popup = ({ isOpen, onClose, setActiveItem, setEventId, myEvents, setMyEven
     const [collaborators, setCollaborators] = useState('');
     const [guestCount, setGuestCount] = useState('');
     const [maxBudget, setMaxBudget] = useState('');
+    const showSnackbar = useSnackbar();
 
     useEffect(() => {
         const data = localStorage.getItem('user-info');
@@ -47,7 +49,9 @@ const Popup = ({ isOpen, onClose, setActiveItem, setEventId, myEvents, setMyEven
                 // console.log('Response I got after crating new event: ', response);
                 const updatedEventData = { ...eventData, _id: response._id };
                 generateAndSaveTaskList(eventType, createdBy, response._id);
-                alert('Event successfully created!');
+               // alert('Event successfully created!');
+                showSnackbar('Event successfully created.');
+
                 setActiveItem('overview');
 
                 addNewEventToMyEvents(updatedEventData);

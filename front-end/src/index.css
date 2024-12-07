@@ -507,7 +507,7 @@ span{
   cursor: pointer;
   background-color: var(--primary-purple);
   color: var(--primary-white);
-  padding: 10px 20px;
+  padding: 5px 15px;
   border: none;
   border-radius: 30px;
 }
@@ -517,7 +517,7 @@ span{
 
   background-color: var(--primary-green);
   color: black;
-  padding:10px 20px;
+  padding:5px 15px;
   border: none;
   border-radius: 30px;
 }
@@ -534,7 +534,7 @@ span{
 .button-green {
   background-color: transparent;
   color: black;
-  padding: 5px 20px;
+  padding: 5px 15px;
   border: 1px solid var(--primary-green);
   border-radius: 30px;
 }

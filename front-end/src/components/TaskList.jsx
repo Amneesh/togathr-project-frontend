@@ -380,6 +380,8 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
       <div className="overview-tasks-header">
         <h2>Tasks</h2>
 
+       
+        <div className="overview-modal-buttons">
         <Modal
           className="all-tasks"
           buttonId="allTasks"
@@ -418,7 +420,7 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
           onModalClose={() => console.log("Modal 1 closed")}
           closeModalAfterDataSend="true"
         />
-        <div>
+
           <Modal
             className="add-task"
             buttonId="addTask"
@@ -561,7 +563,10 @@ export const TaskList = ({ TaskeventId, TaskeventType }) => {
         </div>
       </div> */}
       <div className="todo-list">
-        <h4>Unassigned Tasks</h4>
+        <div className="todo-list-header">
+          <h4>Unassigned Tasks</h4>
+          <h4>{unAssignedTasks.length} tasks</h4>
+        </div>
         <div className="todo-list-items">
           {unAssignedTasks && unAssignedTasks.length > 0 ? (
             unAssignedTasks.map((task, index) => (
